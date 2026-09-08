@@ -39,3 +39,14 @@
 ## 仍需验收的边界
 
 当前已经接近原稿的构图与地形语言，但水面的水彩细节仍由 SVG 近似实现，未获得用户最终视觉确认。宽度是演示几何，没有资本评分算法。窄屏采用裁切地图加文字/按钮等价入口，未做整张地图平移缩放。真实保存、AI 探索、长期路径与计划编辑按后续阶段执行。屏幕阅读器未使用独立设备全量验证，不把 DOM 语义检查等同于完整辅助技术验收。
+
+## 2026-09-08 视觉与一屏修订
+
+本轮在 checkpoint `3c89095` 之后进行，范围保持在用户指定的 P0/P1/P2：
+
+- 应用根节点改为 `height: 100dvh; min-height: 0; overflow: hidden`；背景、SVG、DOM overlay、侧栏和底栏均属于同一个 viewport 坐标层。移动端单独恢复纵向滚动，桌面端不监听或修改浏览器 Zoom。
+- 地形图使用 `object-fit: cover`，不再使用固定尺寸或 `object-fit: fill`。1366×768、1440×900、1536×864 回归结果均为 body/document 高度等于 viewport，纵向溢出为 false，底栏 bottom 不超过 viewport。
+- 河水主体改为青蓝基色 + 两层低对比 radial wash + 轻微 turbulence grain；沿岸增加很弱的 displacement edge 和 translucent bank wash。原有流纹保留，短线不增加数量。
+- 右上、左下、右下增加低 opacity 的独立 ambient mist；不覆盖题字和主要卡片。右上题字与地图批注使用轻人文 fallback（STKaiti/Kaiti SC → Noto Serif SC），产品 UI 字体保持不变。
+
+本轮截图和代码检查证明布局修复；水彩层次依然属于 SVG 近似，最终是否达到目标高保真仍需用户视觉确认。
