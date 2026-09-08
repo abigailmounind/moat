@@ -63,4 +63,18 @@
 - 用户提供的 `rivers-watercolor-hires.svg` 已保存到 `assets/three-rivers/`。文件尺寸同为 `1672 × 941`，但结构是一个内嵌透明 PNG 的 SVG wrapper（1 个 `<image>`、0 个 `<path>`），因此登记为视觉纹理资产，不冒充可编辑路径组件。
 - 运行时将该纹理作为底层河面图层；现有 `src/map.js` 的三河路径、透明命中区、未来分叉和 `water-flow` 动态继续保留。资源设置 `pointer-events: none`，证明节点与河流入口仍可操作。
 - 浏览器验证显示新图层 opacity `0.97`、命中区可打开证明详情，资源路由返回 200；完整显现后河面深浅、中心汇流与水彩边缘明显接近高保真参考。
-- 旧程序化河面填充、wash、core 和 bank edge 已从运行时 SVG 移除；动态只作用于新河面对应的中心线流纹与低对比支流流纹。新 SVG 通过 `river-edge-clean` 轻度 alpha 侵蚀去除毛躁外缘，并通过 brightness / saturation / contrast 校正为更墨的蓝色。
+- 旧程序化河面填充、wash、core 和 bank edge 已从运行时 SVG 移除；动态只作用于新河面对应的中心线流纹与低对比支流流纹。原始 SVG 的嵌入 PNG 后续改由资产级 alpha 处理生成 clean.svg；运行时不再依赖 `river-edge-clean` SVG filter，并通过 brightness / saturation / contrast 校正为更柔和的灰蓝色。
+
+## 2026-09-08 河流资产与汇流显现精修
+
+本轮严格限制在河流素材、河流色彩与质感、河流出现动画、三河汇流高光；页面布局、卡片、地形底图、文案和雾层未改动。
+
+- 资产类型确认：用户 SVG 是 B 类自包含 SVG wrapper，`1672 × 941`，内部为一张 RGBA PNG，没有可编辑 `<path>`。原始文件保留在 `assets/three-rivers/rivers-watercolor-hires.svg`。
+- 资产层去毛边：`scripts/clean_river_asset.py` 解码内嵌 PNG，以 alpha ≥ 96 的主体轮廓做 3px 外扩，仅裁掉主体外脱离的低 alpha 浅色边缘，保留主体内部水彩浅层和抗锯齿边缘；产物为 `rivers-watercolor-hires-clean.svg` 与 `rivers-watercolor-hires-clean.png`。本轮不依赖 CSS 降透明度来伪装去边。
+- 河流层：移除旧的程序化河身、wash、core 和 bank-edge 视觉层；页面只引用 clean.svg 作为水彩河面，`water-flow` / `tributary-flow` 仅承担细微动态流纹，因此不会再出现旧阴影独自流动。
+- 色彩：运行时 filter 调整为 `brightness(1.06) saturate(.82) contrast(.95)`，让青蓝河面更灰、更轻，保留较深的主体墨色和内部纹理。
+- 汇流显现：新增 `river-reveal` user-space mask。三条主河路径均以汇流点为起点，分别向左上、右上、下方用 pathLength + dashoffset 显现；支流在主河之后短暂显现。未使用整幅图片 opacity 0→1 或圆形径向遮罩。
+- 汇流高光：依据清理后位图中心亮部的 alpha 加权分析（约 `892.5,451.2`）并结合主河中心线，将高光定位为 `884,452`，半径由 36 缩至 31，显现为一次短促柔和的 pulse，不做强灯光效果。
+- 浏览器核验：运行时 `water-body` / `bank-edge` 为 0；`river-reveal` 存在且含 3 条主路径、10 条支流路径；图片无自身动画，进入时读取到 `river-reveal`，320ms 时主路径 dashoffset 约 49px，约 1.6s 后为 0；汇流高光 opacity 为 0.68；暂停按钮能保持流纹 offset 不变且 animation-play-state 为 paused；点击透明命中区仍能打开河流摘要。
+
+本轮仍需用户进行最终视觉验收，阶段 9 不在本记录中标记完成。
