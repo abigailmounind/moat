@@ -72,13 +72,43 @@ def dilate(mask, width, height, radius):
                 if horizontal[src + x]: out[dst + x] = 1
     return out
 
+def erode(mask, width, height, radius):
+    horizontal = bytearray(width * height)
+    span = radius * 2 + 1
+    for y in range(height):
+        base = y * width
+        count = sum(mask[base:base + radius + 1])
+        for x in range(width):
+            entering = x + radius
+            leaving = x - radius - 1
+            if entering < width and entering >= radius + 1:
+                count += mask[base + entering]
+            if leaving >= 0:
+                count -= mask[base + leaving]
+            if radius <= x < width - radius and count == span:
+                horizontal[base + x] = 1
+    out = bytearray(width * height)
+    for x in range(width):
+        count = sum(horizontal[y * width + x] for y in range(radius + 1))
+        for y in range(height):
+            entering = y + radius
+            leaving = y - radius - 1
+            if entering < height and entering >= radius + 1:
+                count += horizontal[entering * width + x]
+            if leaving >= 0:
+                count -= horizontal[leaving * width + x]
+            if radius <= y < height - radius and count == span:
+                out[y * width + x] = 1
+    return out
+
 svg = SRC.read_text(encoding='utf-8')
 prefix = "data:image/png;base64,"; start = svg.index(prefix) + len(prefix); end = svg.index("\"", start); encoded = svg[start:end]
 if not encoded: raise ValueError("embedded PNG not found")
 source_png = base64.b64decode(encoded)
 w, h, rows = decode_rgba(source_png)
 alpha = bytearray(row[i] for row in rows for i in range(3, len(row), 4))
-# Keep the watercolor interior and anti-aliased contour, while removing detached pale fringe.
+# Remove detached low-alpha pixels first, then attenuate only the pale cyan outer band.
+# Interior pale watercolor and white flow texture stay untouched.
 strong = bytearray(1 if a >= 96 else 0 for a in alpha)
 keep = dilate(strong, w, h, 3)
 removed = 0
@@ -89,6 +119,22 @@ for idx, row in enumerate(rows):
         if not keep[ai]:
             if row[x*4+3]: removed += 1
             row[x*4+3] = 0
+visible = bytearray(1 if row[x*4+3] >= 24 else 0 for row in rows for x in range(w))
+interior = erode(visible, w, h, 18)
+fringe_adjusted = 0
+for y, row in enumerate(rows):
+    base = y * w
+    for x in range(w):
+        if not visible[base + x] or interior[base + x]:
+            continue
+        i = x * 4
+        red, green, blue, a = row[i:i+4]
+        luminance = (54 * red + 183 * green + 19 * blue) / 256
+        pale_cyan = blue >= red + 7 and green >= red + 4
+        if pale_cyan and luminance > 158:
+            factor = max(.12, .68 - (luminance - 158) * .009)
+            row[i+3] = 0 if a * factor < 10 else round(a * factor)
+            fringe_adjusted += 1
 clean_png = encode_rgba(w, h, rows)
 OUT_PNG.write_bytes(clean_png)
 clean_b64 = base64.b64encode(clean_png).decode('ascii')
@@ -96,7 +142,8 @@ clean_svg = svg[:start] + clean_b64 + svg[end:]
 OUT_SVG.write_text(clean_svg, encoding='utf-8', newline='\n')
 meta = {
   'width': w, 'height': h, 'source_bytes': len(source_png), 'clean_bytes': len(clean_png),
-  'removed_pixels': removed, 'alpha_threshold': 96, 'dilation_radius': 3,
+  'removed_pixels': removed, 'fringe_adjusted_pixels': fringe_adjusted,
+  'alpha_threshold': 96, 'dilation_radius': 3, 'edge_band_radius': 18, 'fringe_luminance': 158,
   'source_sha256': __import__('hashlib').sha256(source_png).hexdigest(),
   'clean_sha256': __import__('hashlib').sha256(clean_png).hexdigest(),
 }

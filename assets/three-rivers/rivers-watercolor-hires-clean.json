@@ -2,10 +2,13 @@
   "width": 1672,
   "height": 941,
   "source_bytes": 895041,
-  "clean_bytes": 965959,
+  "clean_bytes": 978350,
   "removed_pixels": 78759,
+  "fringe_adjusted_pixels": 78199,
   "alpha_threshold": 96,
   "dilation_radius": 3,
+  "edge_band_radius": 18,
+  "fringe_luminance": 158,
   "source_sha256": "c03d461e9bb5710d67ea0cdd7374f36fe7cc7bac879593c2a9696301fa665dcb",
-  "clean_sha256": "0cbe45659f9144f76381ea240fc489394e2bc9c760937cae7b0185db6ae66daa"
+  "clean_sha256": "3c9498345bd1ee47ed37e48ca229627b121e661e244eda3a76f666b471adb758"
 }

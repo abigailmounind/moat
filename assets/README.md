@@ -21,7 +21,7 @@
 | archive/duplicates/ | 与已登记副本字节相同的原位置文件，保留来源与可追溯性 |
 | ../docs/archive/ | 阶段 5–8 原型、PDF、低保真与旧产品定义 |
 
-新河流源文件是 src/map.js；执行 `node scripts/export-map.mjs` 更新导出 SVG。河流、节点与 UI 叠层共用 1672 × 941 坐标。不要修改导出 SVG 后忘记回写源代码。`rivers-watercolor-hires.svg` 是用户提供的自包含视觉资产，内部实际为透明 PNG，不将它当作可编辑路径组件。`rivers-watercolor-hires-clean.svg` 由 `scripts/clean_river_asset.py` 在资产层移除脱离主体的低 alpha 外缘后生成；运行时引用 clean.svg，交互仍由现有 SVG 命中区和 DOM 层负责。
+新河流源文件是 src/map.js；执行 `node scripts/export-map.mjs` 更新导出 SVG。河流、节点与 UI 叠层共用 1672 × 941 坐标。不要修改导出 SVG 后忘记回写源代码。`rivers-watercolor-hires.svg` 是用户提供的自包含视觉资产，内部实际为透明 PNG，不将它当作可编辑路径组件。`rivers-watercolor-hires-clean.svg` 由 `scripts/clean_river_asset.py` 在资产层移除脱离主体的低 alpha 外缘后生成；运行时引用 clean.svg；处理先移除脱离主体的低 alpha 外缘，再仅在 18px 外轮廓带衰减高亮浅青毛边，保留内部水彩和白色流纹。交互仍由现有 SVG 命中区和 DOM 层负责。
 
 底图生成于本次任务，基于当前 HiFi 保留暖纸、珊瑚/苔绿/灰紫地形、等高线与树木，移除河流、文字、卡片和光点；原始生成结果留在任务生成目录。此素材不是用户最终验收的单独决定。
 
