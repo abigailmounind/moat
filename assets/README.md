@@ -9,7 +9,7 @@
 | three-rivers/我的河 · 三河总览HiFi-证明详情态.png | 证明详情参考 |
 | three-rivers/我的河 · 三河总览HiFi-未来分叉态.png | 从属未来方向参考 |
 | three-rivers/terrain-v1.png | 从当前参考稿生成的独立地形底图；无河流、文字、UI；运行中复用，待整体视觉验收 |
-| three-rivers/rivers-v2.svg | 本轮可编辑填充河岸、支流、流纹与雾图层；由 src/map.js 导出，待视觉验收 |
+| three-rivers/rivers-v2.svg | 由 src/map.js 导出的交互命中、动态流线与雾图层；视觉河面由用户提供的 hires 资产承载，待视觉验收 |
 | three-rivers/rivers-watercolor-hires.svg | 用户提供的高质感三河视觉层；SVG 内嵌透明 PNG，运行时作为河面纹理层，保留 DOM/SVG 命中与动态叠层 |
 | references/ | 三张地图参考与视觉语法素材板 |
 | references/unselected/ | 两张未选候选稿；不能覆盖当前主方向 |

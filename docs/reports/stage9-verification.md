@@ -53,13 +53,14 @@
 
 ## 2026-09-08 题字与水面二次修订
 
-- 河道在现有固定轮廓内增加沿中心线的半透明深水层，并保留低对比径向 wash、轻微颗粒和不规则短流纹；岸线改为更低对比的扰动边缘与浅色渗水层。
+- 该轮次的程序化中心水色、wash、颗粒与岸线层已被后续用户 SVG 接入取代；当前河面视觉由 hires 纹理资产承载。
 - 右上题字与地图手写批注接入本地 `assets/fonts/LXGWWenKaiLite-Regular.ttf`。字体来源、下载包哈希和 OFL 许可见 `assets/fonts/README.md`；系统字体仍作为回退。
 - 静态路由仅新增字体文件扩展名白名单，未开放文档、压缩包或历史资产。
-- 最新浏览器检查：`water-core` 13 层、ambient mist 3 层、字体 CSS 规则存在、暂停后流纹 offset 保持不变；项目检查与 4 项状态测试通过。
+- 最新浏览器检查：字体 CSS 规则存在、ambient mist 3 层、旧 `water-body` 与 `bank-edge` 均为 0，暂停后新 `water-flow` offset 保持不变；项目检查与 4 项状态测试通过。
 
 ## 2026-09-08 用户河流 SVG 接入
 
 - 用户提供的 `rivers-watercolor-hires.svg` 已保存到 `assets/three-rivers/`。文件尺寸同为 `1672 × 941`，但结构是一个内嵌透明 PNG 的 SVG wrapper（1 个 `<image>`、0 个 `<path>`），因此登记为视觉纹理资产，不冒充可编辑路径组件。
 - 运行时将该纹理作为底层河面图层；现有 `src/map.js` 的三河路径、透明命中区、未来分叉和 `water-flow` 动态继续保留。资源设置 `pointer-events: none`，证明节点与河流入口仍可操作。
 - 浏览器验证显示新图层 opacity `0.97`、命中区可打开证明详情，资源路由返回 200；完整显现后河面深浅、中心汇流与水彩边缘明显接近高保真参考。
+- 旧程序化河面填充、wash、core 和 bank edge 已从运行时 SVG 移除；动态只作用于新河面对应的中心线流纹与低对比支流流纹。新 SVG 通过 `river-edge-clean` 轻度 alpha 侵蚀去除毛躁外缘，并通过 brightness / saturation / contrast 校正为更墨的蓝色。
