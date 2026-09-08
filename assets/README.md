@@ -10,6 +10,7 @@
 | three-rivers/我的河 · 三河总览HiFi-未来分叉态.png | 从属未来方向参考 |
 | three-rivers/terrain-v1.png | 从当前参考稿生成的独立地形底图；无河流、文字、UI；运行中复用，待整体视觉验收 |
 | three-rivers/rivers-v2.svg | 本轮可编辑填充河岸、支流、流纹与雾图层；由 src/map.js 导出，待视觉验收 |
+| three-rivers/rivers-watercolor-hires.svg | 用户提供的高质感三河视觉层；SVG 内嵌透明 PNG，运行时作为河面纹理层，保留 DOM/SVG 命中与动态叠层 |
 | references/ | 三张地图参考与视觉语法素材板 |
 | references/unselected/ | 两张未选候选稿；不能覆盖当前主方向 |
 | motion/动态显现示例.mp4 | 约 4.83 秒动效参考；不作为网页地图本体 |
@@ -18,7 +19,7 @@
 | archive/duplicates/ | 与已登记副本字节相同的原位置文件，保留来源与可追溯性 |
 | ../docs/archive/ | 阶段 5–8 原型、PDF、低保真与旧产品定义 |
 
-新河流源文件是 src/map.js；执行 `node scripts/export-map.mjs` 更新导出 SVG。河流、节点与 UI 叠层共用 1672 × 941 坐标。不要修改导出 SVG 后忘记回写源代码。完整 PNG 仅作视觉对照，运行时不是截图热区。
+新河流源文件是 src/map.js；执行 `node scripts/export-map.mjs` 更新导出 SVG。河流、节点与 UI 叠层共用 1672 × 941 坐标。不要修改导出 SVG 后忘记回写源代码。`rivers-watercolor-hires.svg` 是用户提供的自包含视觉资产，内部实际为透明 PNG，不将它当作可编辑路径组件；运行时只把它作为纹理层，交互仍由现有 SVG 命中区和 DOM 层负责。
 
 底图生成于本次任务，基于当前 HiFi 保留暖纸、珊瑚/苔绿/灰紫地形、等高线与树木，移除河流、文字、卡片和光点；原始生成结果留在任务生成目录。此素材不是用户最终验收的单独决定。
 

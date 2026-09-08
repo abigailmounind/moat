@@ -57,3 +57,9 @@
 - 右上题字与地图手写批注接入本地 `assets/fonts/LXGWWenKaiLite-Regular.ttf`。字体来源、下载包哈希和 OFL 许可见 `assets/fonts/README.md`；系统字体仍作为回退。
 - 静态路由仅新增字体文件扩展名白名单，未开放文档、压缩包或历史资产。
 - 最新浏览器检查：`water-core` 13 层、ambient mist 3 层、字体 CSS 规则存在、暂停后流纹 offset 保持不变；项目检查与 4 项状态测试通过。
+
+## 2026-09-08 用户河流 SVG 接入
+
+- 用户提供的 `rivers-watercolor-hires.svg` 已保存到 `assets/three-rivers/`。文件尺寸同为 `1672 × 941`，但结构是一个内嵌透明 PNG 的 SVG wrapper（1 个 `<image>`、0 个 `<path>`），因此登记为视觉纹理资产，不冒充可编辑路径组件。
+- 运行时将该纹理作为底层河面图层；现有 `src/map.js` 的三河路径、透明命中区、未来分叉和 `water-flow` 动态继续保留。资源设置 `pointer-events: none`，证明节点与河流入口仍可操作。
+- 浏览器验证显示新图层 opacity `0.97`、命中区可打开证明详情，资源路由返回 200；完整显现后河面深浅、中心汇流与水彩边缘明显接近高保真参考。
