@@ -1,0 +1,2 @@
+# Windows NTFS download metadata is exposed as colon files in WSL.
+*:Zone.Identifier
