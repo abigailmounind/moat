@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+
+<defs>
+  <linearGradient id="riverGrad" x1="0" x2="1">
+    <stop offset="0%" stop-color="#2A7185" stop-opacity="0.96"/>
+    <stop offset="100%" stop-color="#7EA9B1" stop-opacity="0.96"/>
+  </linearGradient>
+  <radialGradient id="mistGrad">
+    <stop offset="0%" stop-color="#B8A9C7" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#F7F1E7" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+
+
+<path d="M100 170 C260 100 420 250 560 175" fill="none" stroke="#7EA9B1" stroke-width="20" opacity="0.48" stroke-linecap="round"/>
+<path d="M100 400 C260 320 430 485 560 405" fill="none" stroke="#2A7185" stroke-width="38" opacity="0.78" stroke-linecap="round"/>
+<path d="M100 640 C260 540 430 730 560 630" fill="none" stroke="#2A7185" stroke-width="62" opacity="0.98" stroke-linecap="round"/>
+<g stroke="#D9C8AA" fill="none" stroke-width="3" opacity="0.7">
+  <path d="M680 120 C840 60 1020 150 1130 110"/>
+  <path d="M680 165 C850 100 1010 195 1130 155"/>
+  <path d="M680 355 C850 300 1010 390 1130 350"/>
+  <path d="M680 405 C850 350 1010 440 1130 400"/>
+  <path d="M680 590 C850 530 1010 625 1130 585"/>
+  <path d="M680 645 C850 585 1010 680 1130 640"/>
+</g>
+
+</svg>

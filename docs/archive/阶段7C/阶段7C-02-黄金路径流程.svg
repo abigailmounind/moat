@@ -1,0 +1,244 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1770" viewBox="0 0 2400 1770"><title>阶段7C｜黄金路径流程 · 用户 / AI / 系统</title><rect width="2400" height="1770" fill="#fff"/>
+<text x="40" y="50" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="30" font-weight="600" fill="#20262b"><tspan x="40" dy="0">阶段 7C—02｜黄金路径流程</tspan></text>
+<text x="40" y="87" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" fill="#333"><tspan x="40" dy="0">场景：已有一定经历、证明资本较弱，探索 AI 产品方向。沿编号阅读；每一阶段均按「用户 / AI / 系统」三泳道展开。</tspan></text>
+<text x="40" y="152" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#333"><tspan x="40" dy="0">A · 探索与结果｜确认理解后评分</tspan></text>
+<rect x="40" y="175" width="2320" height="120" rx="8" fill="#faf8f3" stroke="#ddd"/>
+<text x="60" y="240" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#444"><tspan x="60" dy="0">用户</tspan></text>
+<rect x="40" y="301" width="2320" height="120" rx="8" fill="#f2f5f8" stroke="#ddd"/>
+<text x="60" y="366" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#444"><tspan x="60" dy="0">AI</tspan></text>
+<rect x="40" y="427" width="2320" height="120" rx="8" fill="#f1f6f3" stroke="#ddd"/>
+<text x="60" y="492" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#444"><tspan x="60" dy="0">系统</tspan></text>
+<g id="用户-阶段1-步骤1" aria-label="用户-阶段1-步骤1">
+<g id="阶段1-步骤1" aria-label="阶段1-步骤1">
+<rect x="185" y="194" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="201" y="222" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="201" dy="0">开始探索</tspan></text>
+</g>
+<text x="185" y="189" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="185" dy="0">01</tspan></text>
+</g>
+<g id="用户-阶段1-步骤2" aria-label="用户-阶段1-步骤2">
+<g id="阶段1-步骤2" aria-label="阶段1-步骤2">
+<rect x="400" y="194" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="416" y="222" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="416" dy="0">选择回答</tspan><tspan x="416" dy="21">敏感问题可跳过</tspan></text>
+</g>
+<text x="400" y="189" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="400" dy="0">02</tspan></text>
+</g>
+<g id="AI-阶段1-步骤3" aria-label="AI-阶段1-步骤3">
+<g id="阶段1-步骤3" aria-label="阶段1-步骤3">
+<rect x="615" y="320" width="195" height="83" rx="8" fill="#f2f5f8" stroke="#8c9398"/>
+<text x="631" y="348" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="631" dy="0">构建结构化理解</tspan><tspan x="631" dy="21">（Profile Builder）</tspan></text>
+</g>
+<text x="615" y="315" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="615" dy="0">03</tspan></text>
+</g>
+<g id="AI-阶段1-步骤4" aria-label="AI-阶段1-步骤4">
+<g id="阶段1-步骤4" aria-label="阶段1-步骤4">
+<rect x="830" y="320" width="195" height="83" rx="8" fill="#f2f5f8" stroke="#8c9398"/>
+<text x="846" y="348" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="846" dy="0">生成理解假设</tspan><tspan x="846" dy="21">提议能力 / 经历关联</tspan></text>
+</g>
+<text x="830" y="315" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="830" dy="0">04</tspan></text>
+</g>
+<g id="用户-阶段1-步骤5" aria-label="用户-阶段1-步骤5">
+<g id="阶段1-步骤5" aria-label="阶段1-步骤5">
+<rect x="1045" y="194" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="1061" y="222" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1061" dy="0">确认猜测与理解</tspan><tspan x="1061" dy="21">可修改后再确认</tspan></text>
+</g>
+<text x="1045" y="189" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1045" dy="0">05</tspan></text>
+</g>
+<g id="系统-阶段1-步骤6" aria-label="系统-阶段1-步骤6">
+<g id="阶段1-步骤6" aria-label="阶段1-步骤6">
+<rect x="1260" y="446" width="195" height="83" rx="8" fill="#f1f6f3" stroke="#8c9398"/>
+<text x="1276" y="474" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1276" dy="0">形成已确认 Profile</tspan><tspan x="1276" dy="21">当前会话暂存</tspan></text>
+</g>
+<text x="1260" y="441" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1260" dy="0">06</tspan></text>
+</g>
+<g id="系统-阶段1-步骤7" aria-label="系统-阶段1-步骤7">
+<g id="阶段1-步骤7" aria-label="阶段1-步骤7">
+<rect x="1475" y="446" width="195" height="83" rx="8" fill="#f1f6f3" stroke="#8c9398"/>
+<text x="1491" y="474" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1491" dy="0">规则评分</tspan><tspan x="1491" dy="21">三河 × 五资本</tspan></text>
+</g>
+<text x="1475" y="441" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1475" dy="0">07</tspan></text>
+</g>
+<g id="AI-阶段1-步骤8" aria-label="AI-阶段1-步骤8">
+<g id="阶段1-步骤8" aria-label="阶段1-步骤8">
+<rect x="1690" y="320" width="195" height="83" rx="8" fill="#f2f5f8" stroke="#8c9398"/>
+<text x="1706" y="348" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1706" dy="0">解释三河结果</tspan><tspan x="1706" dy="21">识别关键断点</tspan></text>
+</g>
+<text x="1690" y="315" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1690" dy="0">08</tspan></text>
+</g>
+<g id="用户-阶段1-步骤9" aria-label="用户-阶段1-步骤9">
+<g id="阶段1-步骤9" aria-label="阶段1-步骤9">
+<rect x="1905" y="194" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="1921" y="222" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1921" dy="0">查看三河结果</tspan><tspan x="1921" dy="21">看到证明资本断点</tspan></text>
+</g>
+<text x="1905" y="189" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1905" dy="0">09</tspan></text>
+</g>
+<g><polyline points="380,235.5 390,235.5 390,235.5 400,235.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="400,235.5 391,231.5 391,239.5" fill="#616b72"/></g>
+<g><polyline points="595,235.5 605,235.5 605,361.5 615,361.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="615,361.5 606,357.5 606,365.5" fill="#616b72"/></g>
+<g><polyline points="810,361.5 820,361.5 820,361.5 830,361.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="830,361.5 821,357.5 821,365.5" fill="#616b72"/></g>
+<g><polyline points="1025,361.5 1035,361.5 1035,235.5 1045,235.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1045,235.5 1036,231.5 1036,239.5" fill="#616b72"/></g>
+<g><polyline points="1240,235.5 1250,235.5 1250,487.5 1260,487.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1260,487.5 1251,483.5 1251,491.5" fill="#616b72"/></g>
+<g><polyline points="1455,487.5 1465,487.5 1465,487.5 1475,487.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1475,487.5 1466,483.5 1466,491.5" fill="#616b72"/></g>
+<g><polyline points="1670,487.5 1680,487.5 1680,361.5 1690,361.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1690,361.5 1681,357.5 1681,365.5" fill="#616b72"/></g>
+<g><polyline points="1885,361.5 1895,361.5 1895,235.5 1905,235.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1905,235.5 1896,231.5 1896,239.5" fill="#616b72"/></g>
+<text x="191" y="604" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="191" dy="0">继续至下一阶段</tspan></text>
+<text x="40" y="642" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#333"><tspan x="40" dy="0">B · 保存与建设｜确认范围后持久化，确认草稿后执行</tspan></text>
+<rect x="40" y="665" width="2320" height="120" rx="8" fill="#faf8f3" stroke="#ddd"/>
+<text x="60" y="730" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#444"><tspan x="60" dy="0">用户</tspan></text>
+<rect x="40" y="791" width="2320" height="120" rx="8" fill="#f2f5f8" stroke="#ddd"/>
+<text x="60" y="856" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#444"><tspan x="60" dy="0">AI</tspan></text>
+<rect x="40" y="917" width="2320" height="120" rx="8" fill="#f1f6f3" stroke="#ddd"/>
+<text x="60" y="982" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#444"><tspan x="60" dy="0">系统</tspan></text>
+<g id="AI-阶段2-步骤1" aria-label="AI-阶段2-步骤1">
+<g id="阶段2-步骤1" aria-label="阶段2-步骤1">
+<rect x="185" y="810" width="195" height="83" rx="8" fill="#f2f5f8" stroke="#8c9398"/>
+<text x="201" y="838" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="201" dy="0">初始化未来路径建议</tspan><tspan x="201" dy="21">基于已确认资料与结果</tspan></text>
+</g>
+<text x="185" y="805" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="185" dy="0">10</tspan></text>
+</g>
+<g id="用户-阶段2-步骤2" aria-label="用户-阶段2-步骤2">
+<g id="阶段2-步骤2" aria-label="阶段2-步骤2">
+<rect x="400" y="684" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="416" y="712" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="416" dy="0">选择一条未来路径</tspan><tspan x="416" dy="21">提出保存意愿</tspan></text>
+</g>
+<text x="400" y="679" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="400" dy="0">11</tspan></text>
+</g>
+<g id="用户-阶段2-步骤3" aria-label="用户-阶段2-步骤3">
+<g id="阶段2-步骤3" aria-label="阶段2-步骤3">
+<rect x="615" y="684" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="631" y="712" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="631" dy="0">建立我的护城河</tspan></text>
+</g>
+<text x="615" y="679" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="615" dy="0">12</tspan></text>
+</g>
+<g id="用户-阶段2-步骤4" aria-label="用户-阶段2-步骤4">
+<g id="阶段2-步骤4" aria-label="阶段2-步骤4">
+<rect x="830" y="684" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="846" y="712" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="846" dy="0">注册 / 登录（如需要）</tspan><tspan x="846" dy="21">确认保存范围</tspan><tspan x="846" dy="21">敏感信息可不保存</tspan></text>
+</g>
+<text x="830" y="679" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="830" dy="0">13</tspan></text>
+</g>
+<g id="系统-阶段2-步骤5" aria-label="系统-阶段2-步骤5">
+<g id="阶段2-步骤5" aria-label="阶段2-步骤5">
+<rect x="1045" y="936" width="195" height="83" rx="8" fill="#f1f6f3" stroke="#8c9398"/>
+<text x="1061" y="964" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1061" dy="0">按授权保存 Profile</tspan><tspan x="1061" dy="21">保存所选路径（Path）</tspan></text>
+</g>
+<text x="1045" y="931" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1045" dy="0">14</tspan></text>
+</g>
+<g id="AI-阶段2-步骤6" aria-label="AI-阶段2-步骤6">
+<g id="阶段2-步骤6" aria-label="阶段2-步骤6">
+<rect x="1260" y="810" width="195" height="83" rx="8" fill="#f2f5f8" stroke="#8c9398"/>
+<text x="1276" y="838" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1276" dy="0">初始化建设建议</tspan><tspan x="1276" dy="21">资本目标 / 里程碑草稿</tspan></text>
+</g>
+<text x="1260" y="805" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1260" dy="0">15</tspan></text>
+</g>
+<g id="用户-阶段2-步骤7" aria-label="用户-阶段2-步骤7">
+<g id="阶段2-步骤7" aria-label="阶段2-步骤7">
+<rect x="1475" y="684" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="1491" y="712" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1491" dy="0">编辑并确认建设草稿</tspan><tspan x="1491" dy="21">可调整目标与行动</tspan></text>
+</g>
+<text x="1475" y="679" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1475" dy="0">16</tspan></text>
+</g>
+<g id="系统-阶段2-步骤8" aria-label="系统-阶段2-步骤8">
+<g id="阶段2-步骤8" aria-label="阶段2-步骤8">
+<rect x="1690" y="936" width="195" height="83" rx="8" fill="#f1f6f3" stroke="#8c9398"/>
+<text x="1706" y="964" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1706" dy="0">保存护城河建设计划</tspan><tspan x="1706" dy="21">及里程碑；保持可编辑</tspan></text>
+</g>
+<text x="1690" y="931" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1690" dy="0">17</tspan></text>
+</g>
+<g><polyline points="380,851.5 390,851.5 390,725.5 400,725.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="400,725.5 391,721.5 391,729.5" fill="#616b72"/></g>
+<g><polyline points="595,725.5 605,725.5 605,725.5 615,725.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="615,725.5 606,721.5 606,729.5" fill="#616b72"/></g>
+<g><polyline points="810,725.5 820,725.5 820,725.5 830,725.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="830,725.5 821,721.5 821,729.5" fill="#616b72"/></g>
+<g><polyline points="1025,725.5 1035,725.5 1035,977.5 1045,977.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1045,977.5 1036,973.5 1036,981.5" fill="#616b72"/></g>
+<g><polyline points="1240,977.5 1250,977.5 1250,851.5 1260,851.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1260,851.5 1251,847.5 1251,855.5" fill="#616b72"/></g>
+<g><polyline points="1455,851.5 1465,851.5 1465,725.5 1475,725.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1475,725.5 1466,721.5 1466,729.5" fill="#616b72"/></g>
+<g><polyline points="1670,725.5 1680,725.5 1680,977.5 1690,977.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1690,977.5 1681,973.5 1681,981.5" fill="#616b72"/></g>
+<text x="191" y="1094" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="191" dy="0">继续至下一阶段</tspan></text>
+<text x="40" y="1132" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#333"><tspan x="40" dy="0">C · 行动与更新｜里程碑 → 成果证明 → 资本重算 → 三河变化</tspan></text>
+<rect x="40" y="1155" width="2320" height="120" rx="8" fill="#faf8f3" stroke="#ddd"/>
+<text x="60" y="1220" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#444"><tspan x="60" dy="0">用户</tspan></text>
+<rect x="40" y="1281" width="2320" height="120" rx="8" fill="#f2f5f8" stroke="#ddd"/>
+<text x="60" y="1346" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#444"><tspan x="60" dy="0">AI</tspan></text>
+<rect x="40" y="1407" width="2320" height="120" rx="8" fill="#f1f6f3" stroke="#ddd"/>
+<text x="60" y="1472" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#444"><tspan x="60" dy="0">系统</tspan></text>
+<g id="用户-阶段3-步骤1" aria-label="用户-阶段3-步骤1">
+<g id="阶段3-步骤1" aria-label="阶段3-步骤1">
+<rect x="185" y="1174" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="201" y="1202" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="201" dy="0">推进里程碑</tspan><tspan x="201" dy="21">例如：完成可演示作品</tspan></text>
+</g>
+<text x="185" y="1169" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="185" dy="0">18</tspan></text>
+</g>
+<g id="用户-阶段3-步骤2" aria-label="用户-阶段3-步骤2">
+<g id="阶段3-步骤2" aria-label="阶段3-步骤2">
+<rect x="400" y="1174" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="416" y="1202" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="416" dy="0">添加成果证明</tspan><tspan x="416" dy="21">例如：作品链接与反馈</tspan></text>
+</g>
+<text x="400" y="1169" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="400" dy="0">19</tspan></text>
+</g>
+<g id="系统-阶段3-步骤3" aria-label="系统-阶段3-步骤3">
+<g id="阶段3-步骤3" aria-label="阶段3-步骤3">
+<rect x="615" y="1426" width="195" height="83" rx="8" fill="#f1f6f3" stroke="#8c9398"/>
+<text x="631" y="1454" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="631" dy="0">记录成果证明</tspan><tspan x="631" dy="21">关联里程碑；尚不加分</tspan></text>
+</g>
+<text x="615" y="1421" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="615" dy="0">20</tspan></text>
+</g>
+<g id="AI-阶段3-步骤4" aria-label="AI-阶段3-步骤4">
+<g id="阶段3-步骤4" aria-label="阶段3-步骤4">
+<rect x="830" y="1300" width="195" height="83" rx="8" fill="#f2f5f8" stroke="#8c9398"/>
+<text x="846" y="1328" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="846" dy="0">判断成果的资本关联</tspan><tspan x="846" dy="21">提出候选关联与依据</tspan></text>
+</g>
+<text x="830" y="1295" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="830" dy="0">21</tspan></text>
+</g>
+<g id="用户-阶段3-步骤5" aria-label="用户-阶段3-步骤5">
+<g id="阶段3-步骤5" aria-label="阶段3-步骤5">
+<rect x="1045" y="1174" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="1061" y="1202" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1061" dy="0">确认 / 修改资本关联</tspan><tspan x="1061" dy="21">确认后提交重算</tspan></text>
+</g>
+<text x="1045" y="1169" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1045" dy="0">22</tspan></text>
+</g>
+<g id="系统-阶段3-步骤6" aria-label="系统-阶段3-步骤6">
+<g id="阶段3-步骤6" aria-label="阶段3-步骤6">
+<rect x="1260" y="1426" width="195" height="83" rx="8" fill="#f1f6f3" stroke="#8c9398"/>
+<text x="1276" y="1454" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1276" dy="0">按规则重算资本</tspan><tspan x="1276" dy="21">更新三河百分比</tspan></text>
+</g>
+<text x="1260" y="1421" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1260" dy="0">23</tspan></text>
+</g>
+<g id="系统-阶段3-步骤7" aria-label="系统-阶段3-步骤7">
+<g id="阶段3-步骤7" aria-label="阶段3-步骤7">
+<rect x="1475" y="1426" width="195" height="83" rx="8" fill="#f1f6f3" stroke="#8c9398"/>
+<text x="1491" y="1454" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1491" dy="0">写入历史变化</tspan><tspan x="1491" dy="21">保留变更依据</tspan></text>
+</g>
+<text x="1475" y="1421" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1475" dy="0">24</tspan></text>
+</g>
+<g id="AI-阶段3-步骤8" aria-label="AI-阶段3-步骤8">
+<g id="阶段3-步骤8" aria-label="阶段3-步骤8">
+<rect x="1690" y="1300" width="195" height="83" rx="8" fill="#f2f5f8" stroke="#8c9398"/>
+<text x="1706" y="1328" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1706" dy="0">生成变化解释</tspan><tspan x="1706" dy="21">依据系统计算结果</tspan></text>
+</g>
+<text x="1690" y="1295" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1690" dy="0">25</tspan></text>
+</g>
+<g id="系统-阶段3-步骤9" aria-label="系统-阶段3-步骤9">
+<g id="阶段3-步骤9" aria-label="阶段3-步骤9">
+<rect x="1905" y="1426" width="195" height="83" rx="8" fill="#f1f6f3" stroke="#8c9398"/>
+<text x="1921" y="1454" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="1921" dy="0">更新我的河首页</tspan><tspan x="1921" dy="21">展示变化与解释</tspan></text>
+</g>
+<text x="1905" y="1421" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="1905" dy="0">26</tspan></text>
+</g>
+<g id="用户-阶段3-步骤10" aria-label="用户-阶段3-步骤10">
+<g id="阶段3-步骤10" aria-label="阶段3-步骤10">
+<rect x="2120" y="1174" width="195" height="83" rx="8" fill="#faf8f3" stroke="#8c9398"/>
+<text x="2136" y="1202" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="14" font-weight="400" fill="#333"><tspan x="2136" dy="0">查看三河变化</tspan><tspan x="2136" dy="21">回到首页继续建设</tspan></text>
+</g>
+<text x="2120" y="1169" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="13" font-weight="400" fill="#333"><tspan x="2120" dy="0">27</tspan></text>
+</g>
+<g><polyline points="380,1215.5 390,1215.5 390,1215.5 400,1215.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="400,1215.5 391,1211.5 391,1219.5" fill="#616b72"/></g>
+<g><polyline points="595,1215.5 605,1215.5 605,1467.5 615,1467.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="615,1467.5 606,1463.5 606,1471.5" fill="#616b72"/></g>
+<g><polyline points="810,1467.5 820,1467.5 820,1341.5 830,1341.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="830,1341.5 821,1337.5 821,1345.5" fill="#616b72"/></g>
+<g><polyline points="1025,1341.5 1035,1341.5 1035,1215.5 1045,1215.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1045,1215.5 1036,1211.5 1036,1219.5" fill="#616b72"/></g>
+<g><polyline points="1240,1215.5 1250,1215.5 1250,1467.5 1260,1467.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1260,1467.5 1251,1463.5 1251,1471.5" fill="#616b72"/></g>
+<g><polyline points="1455,1467.5 1465,1467.5 1465,1467.5 1475,1467.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1475,1467.5 1466,1463.5 1466,1471.5" fill="#616b72"/></g>
+<g><polyline points="1670,1467.5 1680,1467.5 1680,1341.5 1690,1341.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1690,1341.5 1681,1337.5 1681,1345.5" fill="#616b72"/></g>
+<g><polyline points="1885,1341.5 1895,1341.5 1895,1467.5 1905,1467.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1905,1467.5 1896,1463.5 1896,1471.5" fill="#616b72"/></g>
+<g><polyline points="2100,1467.5 2110,1467.5 2110,1215.5 2120,1215.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="2120,1215.5 2111,1211.5 2111,1219.5" fill="#616b72"/></g>
+<g><polyline points="2100,235.5 2345,235.5 2345,578 20,578 20,794.5 166,794.5 166,851.5 185,851.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="185,851.5 176,847.5 176,855.5" fill="#616b72"/></g>
+<g><polyline points="1885,977.5 2345,977.5 2345,1068 20,1068 20,1158.5 166,1158.5 166,1215.5 185,1215.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="185,1215.5 176,1211.5 176,1219.5" fill="#616b72"/></g>
+<rect x="40" y="1620" width="2320" height="108" rx="8" fill="#fafafa" stroke="#ddd"/>
+<text x="62" y="1655" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="20" font-weight="600" fill="#333"><tspan x="62" dy="0">权限规则：AI 提议 → 用户确认 / 修改 → 系统执行。AI 不自行写入计划、确认关联或生成评分百分比。</tspan></text>
+<text x="62" y="1693" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" fill="#333"><tspan x="62" dy="0">保存前仅当前会话暂存；长期写入受保存范围约束。用户可编辑 / 删除。单个行动与成果可支持多条路径，统一积累到个人三河系统。</tspan></text></svg>

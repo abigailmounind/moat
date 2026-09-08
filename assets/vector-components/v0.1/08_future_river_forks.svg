@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+
+<defs>
+  <linearGradient id="riverGrad" x1="0" x2="1">
+    <stop offset="0%" stop-color="#2A7185" stop-opacity="0.96"/>
+    <stop offset="100%" stop-color="#7EA9B1" stop-opacity="0.96"/>
+  </linearGradient>
+  <radialGradient id="mistGrad">
+    <stop offset="0%" stop-color="#B8A9C7" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#F7F1E7" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+
+
+<path d="M120 650 C300 600 430 520 560 440" fill="none" stroke="#2A7185" stroke-width="56" stroke-linecap="round"/>
+<path d="M560 440 C700 360 820 250 930 120" fill="none" stroke="#2A7185" stroke-width="34" stroke-linecap="round"/>
+<path d="M560 440 C730 430 900 405 1080 355" fill="none" stroke="#7EA9B1" stroke-width="30" stroke-linecap="round"/>
+<path d="M560 440 C720 500 835 585 940 700" fill="none" stroke="#7EA9B1" stroke-width="24" stroke-linecap="round" opacity="0.72"/>
+<ellipse cx="980" cy="120" rx="170" ry="110" fill="url(#mistGrad)"/>
+<ellipse cx="1080" cy="350" rx="170" ry="110" fill="url(#mistGrad)"/>
+<ellipse cx="960" cy="700" rx="170" ry="110" fill="url(#mistGrad)"/>
+
+</svg>

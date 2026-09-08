@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+
+<defs>
+  <linearGradient id="riverGrad" x1="0" x2="1">
+    <stop offset="0%" stop-color="#2A7185" stop-opacity="0.96"/>
+    <stop offset="100%" stop-color="#7EA9B1" stop-opacity="0.96"/>
+  </linearGradient>
+  <radialGradient id="mistGrad">
+    <stop offset="0%" stop-color="#B8A9C7" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#F7F1E7" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+
+
+<path d="M80 170 C300 200 470 270 590 410" fill="none" stroke="#2A7185" stroke-width="64" stroke-linecap="round"/>
+<path d="M1120 160 C900 205 760 270 610 405" fill="none" stroke="#2A7185" stroke-width="64" stroke-linecap="round"/>
+<path d="M610 760 C610 620 610 500 600 410" fill="none" stroke="#2A7185" stroke-width="64" stroke-linecap="round"/>
+<g fill="none" stroke="#2A7185" stroke-linecap="round">
+  <path d="M250 220 C220 150 180 120 120 90" stroke-width="12"/>
+  <path d="M390 285 C380 210 345 165 300 120" stroke-width="10"/>
+  <path d="M900 235 C955 175 995 130 1060 100" stroke-width="11"/>
+  <path d="M775 315 C810 250 845 215 890 180" stroke-width="10"/>
+  <path d="M605 600 C520 635 470 690 430 750" stroke-width="12"/>
+  <path d="M610 585 C700 625 760 680 810 740" stroke-width="11"/>
+</g>
+<circle cx="600" cy="410" r="26" fill="#EAA08B" opacity="0.35"/>
+
+</svg>

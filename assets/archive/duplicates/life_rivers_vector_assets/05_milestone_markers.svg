@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+
+<defs>
+  <linearGradient id="riverGrad" x1="0" x2="1">
+    <stop offset="0%" stop-color="#2A7185" stop-opacity="0.96"/>
+    <stop offset="100%" stop-color="#7EA9B1" stop-opacity="0.96"/>
+  </linearGradient>
+  <radialGradient id="mistGrad">
+    <stop offset="0%" stop-color="#B8A9C7" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#F7F1E7" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+
+<circle cx="120" cy="420" r="42" fill="#F4C1B2" opacity="0.25"/>
+<circle cx="300" cy="420" r="42" fill="#F4C1B2" opacity="0.25"/>
+<circle cx="480" cy="420" r="42" fill="#F4C1B2" opacity="0.25"/>
+<circle cx="660" cy="420" r="42" fill="#F4C1B2" opacity="0.25"/>
+<circle cx="840" cy="420" r="42" fill="#F4C1B2" opacity="0.25"/>
+<circle cx="1020" cy="420" r="42" fill="#F4C1B2" opacity="0.25"/>
+<line x1="120" y1="420" x2="120" y2="250" stroke="#35535B" stroke-width="8"/><circle cx="120" cy="235" r="22" fill="#EAA08B"/>
+<line x1="300" y1="420" x2="300" y2="260" stroke="#35535B" stroke-width="8"/><circle cx="300" cy="245" r="28" fill="none" stroke="#2A7185" stroke-width="8"/><circle cx="300" cy="245" r="8" fill="#2A7185"/>
+<line x1="480" y1="420" x2="480" y2="265" stroke="#35535B" stroke-width="8"/><polygon points="480,220 505,265 455,265" fill="#7F9074"/>
+<line x1="660" y1="420" x2="660" y2="255" stroke="#35535B" stroke-width="8"/><path d="M660 250 L730 270 L660 295 Z" fill="#EAA08B"/>
+<line x1="840" y1="420" x2="840" y2="245" stroke="#35535B" stroke-width="8"/><polygon points="840,205 855,235 890,240 865,262 872,298 840,280 808,298 815,262 790,240 825,235" fill="#B8A9C7"/>
+<line x1="1020" y1="420" x2="1020" y2="260" stroke="#35535B" stroke-width="8"/><rect x="996" y="222" width="48" height="48" transform="rotate(45 1020 246)" fill="#7EA9B1"/>
+</svg>

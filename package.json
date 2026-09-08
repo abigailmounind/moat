@@ -1,0 +1,1 @@
+{"name":"personal-moat-stage9","private":true,"type":"module","scripts":{"start":"node scripts/serve.mjs","test":"node --test tests","check":"node scripts/check.mjs"}}

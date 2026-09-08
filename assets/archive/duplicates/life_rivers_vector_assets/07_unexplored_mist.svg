@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+
+<defs>
+  <linearGradient id="riverGrad" x1="0" x2="1">
+    <stop offset="0%" stop-color="#2A7185" stop-opacity="0.96"/>
+    <stop offset="100%" stop-color="#7EA9B1" stop-opacity="0.96"/>
+  </linearGradient>
+  <radialGradient id="mistGrad">
+    <stop offset="0%" stop-color="#B8A9C7" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#F7F1E7" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+
+
+<path d="M80 560 C300 430 430 420 670 330 S950 245 1140 150" fill="none" stroke="#2A7185" stroke-width="56" stroke-linecap="round"/>
+<ellipse cx="760" cy="260" rx="250" ry="170" fill="url(#mistGrad)"/>
+<ellipse cx="940" cy="220" rx="260" ry="180" fill="url(#mistGrad)"/>
+<ellipse cx="1060" cy="170" rx="200" ry="140" fill="url(#mistGrad)"/>
+<g stroke="#D9C8AA" stroke-width="3" fill="none" opacity="0.65">
+  <path d="M80 650 C320 580 480 620 700 560"/>
+  <path d="M80 700 C320 630 480 670 700 610"/>
+  <path d="M760 430 C900 390 1050 405 1160 360" opacity="0.32"/>
+</g>
+
+</svg>

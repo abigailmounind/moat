@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+
+<defs>
+  <linearGradient id="riverGrad" x1="0" x2="1">
+    <stop offset="0%" stop-color="#2A7185" stop-opacity="0.96"/>
+    <stop offset="100%" stop-color="#7EA9B1" stop-opacity="0.96"/>
+  </linearGradient>
+  <radialGradient id="mistGrad">
+    <stop offset="0%" stop-color="#B8A9C7" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#F7F1E7" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+
+
+<path d="M60 180 C250 70 390 290 600 180 S960 100 1140 210" fill="none" stroke="url(#riverGrad)" stroke-width="42" stroke-linecap="round"/>
+<path d="M60 390 C240 520 430 280 625 410 S980 560 1140 420" fill="none" stroke="#2A7185" stroke-width="58" stroke-linecap="round" opacity="0.92"/>
+<path d="M60 610 C260 500 430 700 640 600 S950 500 1140 640" fill="none" stroke="#7EA9B1" stroke-width="30" stroke-linecap="round" opacity="0.88"/>
+<path d="M80 160 C250 55 410 270 610 165" fill="none" stroke="#F4C1B2" stroke-width="72" opacity="0.28" stroke-linecap="round"/>
+<path d="M590 450 C800 560 980 530 1140 410" fill="none" stroke="#7F9074" stroke-width="74" opacity="0.22" stroke-linecap="round"/>
+
+</svg>

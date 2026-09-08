@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1570" viewBox="0 0 2400 1570"><title>阶段7C｜MVP端到端总览 · 产品地图 V2</title><rect width="2400" height="1570" fill="#fff"/>
+<text x="40" y="53" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="30" font-weight="600" fill="#20262b"><tspan x="40" dy="0">阶段 7C—01｜MVP 端到端总览</tspan></text>
+<text x="40" y="90" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" fill="#333"><tspan x="40" dy="0">产品地图 V2 · 实线箭头＝进入 / 顺序；虚线箭头＝关联方向 · 评分由规则系统计算，AI 仅提议与解释</tspan></text>
+<rect x="40" y="120" width="340" height="1210" rx="8" fill="#f5f7f8" stroke="#ddd"/>
+<text x="60" y="157" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="600" fill="#333"><tspan x="60" dy="0">首次体验区 · 7A</tspan></text>
+<rect x="400" y="120" width="400" height="1210" rx="8" fill="#f8f8f8" stroke="#ddd"/>
+<text x="420" y="157" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="600" fill="#333"><tspan x="420" dy="0">结果区 · 7A</tspan></text>
+<rect x="820" y="120" width="370" height="1210" rx="8" fill="#f8f7f4" stroke="#ddd"/>
+<text x="840" y="157" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="600" fill="#333"><tspan x="840" dy="0">保存 / 注册区</tspan></text>
+<rect x="1210" y="120" width="1150" height="1210" rx="8" fill="#f4f7f5" stroke="#ddd"/>
+<text x="1230" y="157" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="23" font-weight="600" fill="#333"><tspan x="1230" dy="0">长期使用区 · 7B</tspan></text>
+<g id="首页与探索" aria-label="首页与探索">
+<g id="首页" aria-label="首页">
+<rect x="60" y="190" width="300" height="105" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="76" y="218" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="76" dy="0">首页</tspan></text>
+</g>
+<g id="探索" aria-label="探索">
+<rect x="60" y="340" width="300" height="105" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="76" y="368" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="76" dy="0">三河探索开场</tspan><tspan x="76" dy="25.5">单选 / 多选 / 情境 / 区间题</tspan><tspan x="76" dy="25.5">敏感问题可跳过</tspan></text>
+</g>
+<g id="猜测" aria-label="猜测">
+<rect x="60" y="490" width="300" height="105" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="76" y="518" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="76" dy="0">AI 猜测确认</tspan><tspan x="76" dy="25.5">用户确认 / 修改假设</tspan></text>
+</g>
+<g id="理解" aria-label="理解">
+<rect x="60" y="640" width="300" height="105" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="76" y="668" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="76" dy="0">AI 理解确认</tspan><tspan x="76" dy="25.5">用户确认 / 修改结构化理解</tspan></text>
+</g>
+<g><polyline points="210,295 210,340" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="210,340 214,331 206,331" fill="#616b72"/></g>
+<g><polyline points="210,445 210,490" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="210,490 214,481 206,481" fill="#616b72"/></g>
+<g><polyline points="210,595 210,640" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="210,640 214,631 206,631" fill="#616b72"/></g>
+</g>
+<g id="结果" aria-label="结果">
+<g id="结果0" aria-label="结果0">
+<rect x="430" y="190" width="340" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="446" y="218" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="446" dy="0">结果 01</tspan><tspan x="446" dy="25.5">三河类型</tspan></text>
+</g>
+<g id="结果1" aria-label="结果1">
+<rect x="430" y="340" width="340" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="446" y="368" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="446" dy="0">结果 02</tspan><tspan x="446" dy="25.5">核心判断</tspan></text>
+</g>
+<g><polyline points="600,290 600,340" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="600,340 604,331 596,331" fill="#616b72"/></g>
+<g id="结果2" aria-label="结果2">
+<rect x="430" y="490" width="340" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="446" y="518" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="446" dy="0">结果 03</tspan><tspan x="446" dy="25.5">三河地图</tspan></text>
+</g>
+<g><polyline points="600,440 600,490" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="600,490 604,481 596,481" fill="#616b72"/></g>
+<g id="结果3" aria-label="结果3">
+<rect x="430" y="640" width="340" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="446" y="668" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="446" dy="0">结果 04</tspan><tspan x="446" dy="25.5">三河 × 五资本</tspan></text>
+</g>
+<g><polyline points="600,590 600,640" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="600,640 604,631 596,631" fill="#616b72"/></g>
+<g id="结果4" aria-label="结果4">
+<rect x="430" y="790" width="340" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="446" y="818" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="446" dy="0">结果 05</tspan><tspan x="446" dy="25.5">关键断点</tspan></text>
+</g>
+<g><polyline points="600,740 600,790" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="600,790 604,781 596,781" fill="#616b72"/></g>
+<g id="结果5" aria-label="结果5">
+<rect x="430" y="940" width="340" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="446" y="968" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="446" dy="0">结果 06</tspan><tspan x="446" dy="25.5">类型详解 + 未来路径预览</tspan></text>
+</g>
+<g><polyline points="600,890 600,940" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="600,940 604,931 596,931" fill="#616b72"/></g>
+<g><polyline points="360,692.5 390,692.5 390,240 430,240" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="430,240 421,236 421,244" fill="#616b72"/></g>
+<text x="60" y="875" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="60" dy="0">确认后生成结果</tspan><tspan x="60" dy="25.5">规则评分 → AI 解释</tspan><tspan x="60" dy="25.5">未建立账户时仅用于当前会话</tspan></text>
+</g>
+<g id="保存" aria-label="保存">
+<g id="建立" aria-label="建立">
+<rect x="850" y="190" width="310" height="105" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="866" y="218" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="866" dy="0">建立我的护城河</tspan><tspan x="866" dy="25.5">留下地图，开始持续建设</tspan></text>
+</g>
+<g id="登录" aria-label="登录">
+<rect x="850" y="340" width="310" height="105" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="866" y="368" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="866" dy="0">注册 / 登录（如需要）</tspan><tspan x="866" dy="25.5">已登录则直接继续</tspan></text>
+</g>
+<g id="范围" aria-label="范围">
+<rect x="850" y="490" width="310" height="175" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="866" y="518" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="866" dy="0">保存范围确认</tspan><tspan x="866" dy="25.5">默认项也需用户确认</tspan><tspan x="866" dy="25.5">结果 / 已确认经历 / 路径 / 计划</tspan><tspan x="866" dy="25.5">完整记录与敏感区间可不保存</tspan><tspan x="866" dy="25.5">敏感信息最小化保存</tspan></text>
+</g>
+<g id="持久化" aria-label="持久化">
+<rect x="850" y="710" width="310" height="105" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="866" y="738" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="866" dy="0">按确认范围保存</tspan><tspan x="866" dy="25.5">系统写入个人护城河</tspan><tspan x="866" dy="25.5">未选择的内容不长期保存</tspan></text>
+</g>
+<g><polyline points="1005,295 1005,340" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1005,340 1009,331 1001,331" fill="#616b72"/></g>
+<g><polyline points="1005,445 1005,490" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1005,490 1009,481 1001,481" fill="#616b72"/></g>
+<g><polyline points="1005,665 1005,710" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1005,710 1009,701 1001,701" fill="#616b72"/></g>
+<g><polyline points="770,990 810,990 810,242.5 850,242.5" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="850,242.5 841,238.5 841,246.5" fill="#616b72"/></g>
+<text x="850" y="910" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="850" dy="0">先展示完整结果，再建立账户</tspan><tspan x="850" dy="25.5">用户可在「我的与隐私」</tspan><tspan x="850" dy="25.5">编辑、删除信息与调整保存范围</tspan></text>
+</g>
+<g id="长期使用" aria-label="长期使用">
+<g id="河首页" aria-label="河首页">
+<rect x="1250" y="190" width="310" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1266" y="218" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1266" dy="0">我的河首页</tspan><tspan x="1266" dy="25.5">唯一的个人三河系统</tspan></text>
+</g>
+<g><polyline points="1160,762.5 1198,762.5 1198,240 1250,240" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1250,240 1241,236 1241,244" fill="#616b72"/></g>
+<g id="路径列表" aria-label="路径列表">
+<rect x="1250" y="370" width="310" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1266" y="398" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1266" dy="0">未来路径列表 · 可有多条</tspan><tspan x="1266" dy="25.5">AI 初始建议可改 / 删 / 新增</tspan></text>
+</g>
+<g id="路径详情" aria-label="路径详情">
+<rect x="1250" y="525" width="310" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1266" y="553" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1266" dy="0">路径详情 / 编辑</tspan><tspan x="1266" dy="25.5">选择重点 / 暂停 / 关联建设</tspan></text>
+</g>
+<g><polyline points="1405,290 1405,370" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1405,370 1409,361 1401,361" fill="#616b72"/></g>
+<g><polyline points="1405,470 1405,525" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1405,525 1409,516 1401,516" fill="#616b72"/></g>
+<g id="隐私" aria-label="隐私">
+<rect x="1960" y="190" width="350" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1976" y="218" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1976" dy="0">我的与隐私</tspan><tspan x="1976" dy="25.5">编辑 / 删除 / 保存范围管理</tspan></text>
+</g>
+<g><polyline points="1560,220 1960,220" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1960,220 1951,216 1951,224" fill="#616b72"/></g>
+<g id="建设" aria-label="建设">
+<rect x="1610" y="370" width="310" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1626" y="398" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1626" dy="0">护城河建设总览</tspan><tspan x="1626" dy="25.5">围绕三河 × 五资本</tspan></text>
+</g>
+<g><polyline points="1560,260 1765,260 1765,370" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1765,370 1769,361 1761,361" fill="#616b72"/></g>
+<g><polyline points="1560,575 1585,575 1585,420 1610,420" fill="none" stroke="#616b72" stroke-width="1.7" stroke-dasharray="6 5"/><polygon points="1610,420 1601,416 1601,424" fill="#616b72"/></g>
+<text x="1250" y="661" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="400" fill="#333"><tspan x="1250" dy="0">路径提供方向；建设可服务多条路径</tspan></text>
+<g id="草稿" aria-label="草稿">
+<rect x="1610" y="525" width="310" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1626" y="553" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1626" dy="0">AI 建设建议 / 里程碑草稿</tspan><tspan x="1626" dy="25.5">用户编辑确认 → 系统保存</tspan></text>
+</g>
+<g><polyline points="1765,470 1765,525" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1765,525 1769,516 1761,516" fill="#616b72"/></g>
+<g id="里程碑" aria-label="里程碑">
+<rect x="1610" y="710" width="310" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1626" y="738" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1626" dy="0">里程碑</tspan><tspan x="1626" dy="25.5">推进具体行动</tspan></text>
+</g>
+<g><polyline points="1765,625 1765,710" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1765,710 1769,701 1761,701" fill="#616b72"/></g>
+<g id="证明" aria-label="证明">
+<rect x="1960" y="710" width="350" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1976" y="738" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1976" dy="0">添加成果证明（Evidence）</tspan><tspan x="1976" dy="25.5">系统记录成果，尚不加分</tspan></text>
+</g>
+<g><polyline points="1920,760 1960,760" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1960,760 1951,756 1951,764" fill="#616b72"/></g>
+<g id="判断" aria-label="判断">
+<rect x="1960" y="870" width="350" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1976" y="898" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1976" dy="0">AI 判断资本关联</tspan><tspan x="1976" dy="25.5">提出候选关联与依据</tspan></text>
+</g>
+<g><polyline points="2135,810 2135,870" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="2135,870 2139,861 2131,861" fill="#616b72"/></g>
+<g id="确认" aria-label="确认">
+<rect x="1960" y="1030" width="350" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1976" y="1058" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1976" dy="0">用户确认 / 修改</tspan><tspan x="1976" dy="25.5">确认关联后，系统才能重算</tspan></text>
+</g>
+<g><polyline points="2135,970 2135,1030" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="2135,1030 2139,1021 2131,1021" fill="#616b72"/></g>
+<g id="重算" aria-label="重算">
+<rect x="1610" y="1030" width="310" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1626" y="1058" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1626" dy="0">评分系统重新计算</tspan><tspan x="1626" dy="25.5">资本 → 三河；写入历史</tspan></text>
+</g>
+<g><polyline points="1960,1080 1920,1080" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1920,1080 1929,1084 1929,1076" fill="#616b72"/></g>
+<g id="反馈" aria-label="反馈">
+<rect x="1250" y="1030" width="310" height="100" rx="8" fill="#fff" stroke="#8c9398"/>
+<text x="1266" y="1058" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1266" dy="0">三河更新反馈</tspan><tspan x="1266" dy="25.5">显示变化与依据 / 解释</tspan></text>
+</g>
+<g><polyline points="1610,1080 1560,1080" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1560,1080 1569,1084 1569,1076" fill="#616b72"/></g>
+<g><polyline points="1250,1080 1230,1080 1230,240 1250,240" fill="none" stroke="#616b72" stroke-width="1.7"/><polygon points="1250,240 1241,236 1241,244" fill="#616b72"/></g>
+<text x="1260" y="1190" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1260" dy="0">更新后回到我的河首页，开始下一轮建设</tspan></text>
+<rect x="1960" y="370" width="350" height="255" rx="8" fill="#fff" stroke="#ddd"/>
+<text x="1978" y="404" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="16" font-weight="400" fill="#333"><tspan x="1978" dy="0">高保真重点探索：</tspan><tspan x="1978" dy="24">三河流域 + 五资本支流 +</tspan><tspan x="1978" dy="24">Milestone 节点/梯度的交互可视化；</tspan><tspan x="1978" dy="24">当前仅表达信息关系。</tspan><tspan x="1978" dy="24">不在本轮锁定视觉方案。</tspan></text>
+<text x="1250" y="875" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17" font-weight="400" fill="#333"><tspan x="1250" dy="0">首次进入：地图已保存 → 看未来路径</tspan><tspan x="1250" dy="25.5">无计划：选择方向 → 初始化建设草稿</tspan><tspan x="1250" dy="25.5">护城河建设不是单一路径的 90 天清单</tspan></text>
+</g>
+<g id="产品模型与权限" aria-label="产品模型与权限">
+<rect x="40" y="1360" width="2320" height="165" rx="8" fill="#fafafa" stroke="#ddd"/>
+<text x="65" y="1397" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="22" font-weight="600" fill="#333"><tspan x="65" dy="0">一个人 · 一个个人护城河 · 多条未来路径</tspan></text>
+<text x="65" y="1434" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="19" font-weight="400" fill="#333"><tspan x="65" dy="0">路径提供方向 → 护城河建设决定要建设哪些资本 → 里程碑是具体行动 → 成果证明行动发生 → 评分系统更新三河</tspan></text>
+<text x="65" y="1470" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18" font-weight="400" fill="#333"><tspan x="65" dy="0">三河：生存 / 韧性 / 意义　｜　五资本：能力 / 证明 / 关系 / 资源 / 选择权　｜　统一权限：AI 提议 → 用户确认 / 修改 → 系统执行</tspan></text>
+</g></svg>

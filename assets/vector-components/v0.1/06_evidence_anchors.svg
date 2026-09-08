@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+
+<defs>
+  <linearGradient id="riverGrad" x1="0" x2="1">
+    <stop offset="0%" stop-color="#2A7185" stop-opacity="0.96"/>
+    <stop offset="100%" stop-color="#7EA9B1" stop-opacity="0.96"/>
+  </linearGradient>
+  <radialGradient id="mistGrad">
+    <stop offset="0%" stop-color="#B8A9C7" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="#F7F1E7" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+
+
+<g stroke="#35535B" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="80" y="170" width="180" height="120" rx="18"/><path d="M110 170 L150 125 H220 L250 170"/>
+  <rect x="350" y="160" width="180" height="135" rx="18"/><circle cx="440" cy="225" r="35"/><path d="M390 160 L420 125 H470 L500 160"/>
+  <path d="M640 155 H820 V310 H640 Z"/><path d="M655 180 H805"/><path d="M670 220 H790"/><path d="M670 255 H760"/>
+  <path d="M925 285 V170 Q925 145 950 145 H1080 Q1105 145 1105 170 V285 Z"/><path d="M1015 145 V285"/>
+</g>
+<g fill="#EAA08B" opacity="0.32">
+  <circle cx="170" cy="355" r="34"/><circle cx="440" cy="355" r="34"/><circle cx="730" cy="355" r="34"/><circle cx="1015" cy="355" r="34"/>
+</g>
+
+</svg>
