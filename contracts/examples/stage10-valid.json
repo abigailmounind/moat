@@ -1,0 +1,10 @@
+{
+  "contract_version": "0.1",
+  "session_id": "synthetic-session-01",
+  "claims": [{"id":"claim_experience","kind":"experience","text":"用户在一次小组项目中整理需求并协调分工。","source_type":"ai_proposal","confirmation_status":"pending","input_refs":["q3","q4"]}],
+  "evidence_drafts": [{"id":"evidence_project","title":"一次小组项目的推进","experience":"参与小组项目并推进一版成果。","actions":["整理需求","协调分工"],"result":"完成可查看成果","source":null,"limitations":["没有外部反馈","尚未说明跨情境应用"],"source_type":"user_self_report","confirmation_status":"pending","input_refs":["q3","q4","q5"]}],
+  "capital_links": [{"id":"capital_human","evidence_id":"evidence_project","capital":"human","aspect":"需求整理","explanation":"用户描述了整理需求的具体行动。","confirmation_status":"pending","input_refs":["q4"]}],
+  "river_links": [{"id":"river_ability","evidence_id":"evidence_project","river":"ability","explanation":"具体做法可能迁移到其他项目。","uncertainty":"仍需跨情境验证。","confirmation_status":"pending","input_refs":["q4","q5"]}],
+  "future_direction_drafts": [],
+  "unknowns": [{"id":"unknown_financial","topic":"financial","reason":"not_asked","input_refs":[]},{"id":"unknown_love","topic":"river","reason":"insufficient_evidence","input_refs":["q1","q3"]}]
+}

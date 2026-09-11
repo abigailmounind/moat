@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {initial,reduce} from '../src/state.js';
-import {rivers,proofs,directions,branchAssociations} from '../src/data.js';
-import {waterways,bank,mapMarkup} from '../src/map.js';
+import {initial,reduce} from '../frontend/src/state.js';
+import {rivers,proofs,directions,branchAssociations} from '../frontend/src/data.js';
+import {waterways,bank,mapMarkup} from '../frontend/src/map.js';
 
 test('proof/future replace each other; temporary hover cannot cover a detail',()=>{
  let s=reduce(initial,{type:'RIVER',id:'ability'});
@@ -13,6 +13,11 @@ test('proof/future replace each other; temporary hover cannot cover a detail',()
  assert.equal(s.proof,null);assert.equal(s.direction,'research');
  s=reduce(s,{type:'CLOSE'});
  assert.equal(s.panel,null);assert.equal(s.river,'survival');assert.equal(s.preview,'survival');
+});
+test('proof nodes retain the river context they were opened from',()=>{
+ const resolveRiver=id=>({love:{id:'love'},ability:{id:'ability'}}[id]);
+ const s=reduce(initial,{type:'PROOF',id:'shared',river:'love'},{resolveProof:id=>id==='shared'?{id,river:'ability'}:null,resolveRiver});
+ assert.equal(s.panel,'proof');assert.equal(s.river,'love');
 });
 test('missing direction remains empty and invalid or cross-river selection is ignored',()=>{
  let s=reduce(initial,{type:'FUTURE',id:'love'});
@@ -29,5 +34,12 @@ test('three stable filled river systems share one core; every proof and candidat
  for(const r of waterways){assert.deepEqual(r.knots[0].slice(0,2),[873,444]);const shape=bank(r.knots);assert.equal(shape,bank(r.knots));assert.ok(shape.endsWith('Z'));assert.ok(!shape.includes('NaN'));assert.equal(branchAssociations[r.id].length,r.branches.length);for(const relation of branchAssociations[r.id])assert.equal(proofs.find(p=>p.id===relation.proof)?.river,r.id);}
  for(const r of rivers){for(const id of r.proofs)assert.equal(proofs.find(p=>p.id===id)?.river,r.id);for(const id of r.directions)assert.equal(directions.find(d=>d.id===id)?.river,r.id);}
  const svg=mapMarkup(directions);const ids=[...svg.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(ids).size,ids.length);
+ assert.equal((svg.match(/data-reveal-direction="core-to-outlet"/g)||[]).length,3);
+ assert.equal((svg.match(/river-highlight-halo/g)||[]).length,3);
+ for(const river of ['love','survival','ability'])assert.ok(svg.includes(`river-system-${river}`));
+ assert.ok(!svg.includes('class="water-flow'));
+ assert.ok(!svg.includes('class="future-water-flow'));
+ assert.ok(!svg.includes('data-direction-water'));
+ assert.ok(!svg.includes('--flow-offset:'));
  for(const [,ref] of svg.matchAll(/url\(#([^\)]+)\)/g))assert.ok(ids.includes(ref),`Missing SVG definition: ${ref}`);
 });

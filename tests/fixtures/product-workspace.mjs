@@ -1,0 +1,3 @@
+export const pathItem=(id='path-1',river='ability')=>({id,river,name:'验证路径',status:'exploring',goal:'练习',notes:'',support:'',gap:'',constraints:'',nextAction:''});
+export const planItem=(id='plan-1',pathId='path-1',river='ability')=>({id,river,name:'验证计划',status:'active',goal:'形成方法',notes:'',capitals:['human'],pathIds:[pathId],milestones:[{id:'milestone-1',name:'完成初稿',criterion:'可以回看',done:false,actions:[{id:'action-1',text:'整理素材',done:false}]}]});
+export const growthItem=()=>({id:'growth-1',name:'验证成果',date:'2026-09-10',type:'result',action:'整理素材',result:'形成初稿',reflection:'',source:'合成测试',planId:'plan-1',milestoneId:'milestone-1',planName:'验证计划',milestoneName:'完成初稿'});

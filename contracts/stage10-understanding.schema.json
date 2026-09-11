@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://personal-moat.local/contracts/stage10-understanding.schema.json",
+  "title": "阶段 10 结构化理解候选",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "session_id", "claims", "evidence_drafts", "capital_links", "river_links", "future_direction_drafts", "unknowns"],
+  "properties": {
+    "contract_version": {"const": "0.1"},
+    "session_id": {"type": "string", "minLength": 1, "maxLength": 100},
+    "claims": {"type": "array", "items": {"$ref": "#/$defs/claim"}},
+    "evidence_drafts": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+    "capital_links": {"type": "array", "items": {"$ref": "#/$defs/capitalLink"}},
+    "river_links": {"type": "array", "items": {"$ref": "#/$defs/riverLink"}},
+    "future_direction_drafts": {"type": "array", "items": {"$ref": "#/$defs/direction"}},
+    "unknowns": {"type": "array", "items": {"$ref": "#/$defs/unknown"}}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"},
+    "text": {"type": "string", "minLength": 1, "maxLength": 1000},
+    "status": {"enum": ["pending"]},
+    "refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}},
+    "claim": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "kind", "text", "source_type", "confirmation_status", "input_refs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "kind": {"enum": ["situation", "experience", "preference", "constraint"]},
+        "text": {"$ref": "#/$defs/text"}, "source_type": {"const": "ai_proposal"},
+        "confirmation_status": {"$ref": "#/$defs/status"}, "input_refs": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "title", "experience", "actions", "result", "source", "limitations", "source_type", "confirmation_status", "input_refs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "title": {"$ref": "#/$defs/text"}, "experience": {"$ref": "#/$defs/text"},
+        "actions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
+        "result": {"type": ["string", "null"], "maxLength": 1000}, "source": {"type": ["string", "null"], "maxLength": 1000},
+        "limitations": {"type": "array", "items": {"$ref": "#/$defs/text"}},
+        "source_type": {"const": "user_self_report"}, "confirmation_status": {"$ref": "#/$defs/status"}, "input_refs": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "capitalLink": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "evidence_id", "capital", "aspect", "explanation", "confirmation_status", "input_refs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "evidence_id": {"$ref": "#/$defs/id"},
+        "capital": {"enum": ["human", "social", "psychological", "financial", "physical"]},
+        "aspect": {"$ref": "#/$defs/text"}, "explanation": {"$ref": "#/$defs/text"},
+        "confirmation_status": {"$ref": "#/$defs/status"}, "input_refs": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "riverLink": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "evidence_id", "river", "explanation", "uncertainty", "confirmation_status", "input_refs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "evidence_id": {"$ref": "#/$defs/id"},
+        "river": {"enum": ["survival", "ability", "love"]}, "explanation": {"$ref": "#/$defs/text"},
+        "uncertainty": {"type": ["string", "null"], "maxLength": 1000},
+        "confirmation_status": {"$ref": "#/$defs/status"}, "input_refs": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "direction": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "river", "name", "support", "unknown", "next_action", "confirmation_status", "input_refs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "river": {"enum": ["survival", "ability", "love"]}, "name": {"$ref": "#/$defs/text"},
+        "support": {"$ref": "#/$defs/text"}, "unknown": {"$ref": "#/$defs/text"}, "next_action": {"$ref": "#/$defs/text"},
+        "confirmation_status": {"$ref": "#/$defs/status"}, "input_refs": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "unknown": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "topic", "reason", "input_refs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "topic": {"enum": ["financial", "physical", "evidence", "river", "capital", "direction", "conflict"]},
+        "reason": {"enum": ["skipped", "not_asked", "insufficient_evidence", "conflicting_inputs"]},
+        "input_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}}
+      }
+    }
+  }
+}

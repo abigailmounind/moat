@@ -1,0 +1,24 @@
+// Run with a separately installed jsdom module path; no production dependency.
+import assert from 'node:assert/strict';
+import {pathToFileURL} from 'node:url';
+import {WORKSPACE_KEY,emptyWorkspace,newPath,newGrowth,newPlan} from '../frontend/src/workspace-model.js';
+const {JSDOM}=await import(pathToFileURL(process.argv[2]).href);let sequence=0;
+async function page(view,initial){const dom=new JSDOM('<div id="app"></div>',{url:`http://localhost/?view=${view}`}),errors=[];dom.window.addEventListener('error',event=>errors.push(event.error||event.message));for(const key of ['window','document','location','localStorage','FormData'])Object.defineProperty(globalThis,key,{configurable:true,value:dom.window[key]});window.confirm=()=>true;if(initial)localStorage.setItem(WORKSPACE_KEY,JSON.stringify(initial));await import(`../frontend/src/${view==='growth'?'growth':'workspaces'}.js?dom=${sequence++}`);const q=s=>{const el=document.querySelector(s);assert.ok(el,`Missing ${s}`);return el;};return {q,click:s=>q(s).click(),fill(name,value){const el=q(`[name="${name}"]`);el.value=value;el.dispatchEvent(new window.Event('input',{bubbles:true}));},change(name,value){const el=q(`[name="${name}"]`);el.value=value;el.dispatchEvent(new window.Event('change',{bubbles:true}));},saved:()=>JSON.parse(localStorage.getItem(WORKSPACE_KEY)),close(){assert.deepEqual(errors,[]);dom.window.close();}};}
+const path={...newPath(),name:'研究表达路径',river:'ability'},lovePath={...newPath(),name:'长期写作路径',river:'love'},base={...emptyWorkspace(),paths:[path,lovePath]};
+let p=await page('plans',base);p.click(`[data-new-plan="${path.id}"]`);
+assert.equal(p.q('[name=pathId]').value,path.id);assert.equal(p.q('[name=river]').value,'ability');
+p.change('river','love');assert.equal(p.q('[name=pathId]').value,'');assert.match(p.q('[name=pathId]').textContent,/长期写作路径/);assert.doesNotMatch(p.q('[name=pathId]').textContent,/研究表达路径/);
+p.change('river','ability');p.change('pathId',path.id);
+p.fill('name','保存测试计划');p.click('button[type=submit]');assert.match(p.q('[data-form-error]').textContent,/资本/);
+p.q('[name=capitals][value=human]').checked=true;p.click('[data-add-milestone]');p.click('button[type=submit]');assert.match(p.q('[data-form-error]').textContent,/里程碑/);
+p.fill(document.querySelector('[name^="m-name-"]').name,'第一个里程碑');p.fill(document.querySelector('[name^="m-actions-"]').name,'第一项行动\n第二项行动');p.click('button[type=submit]');
+assert.equal(p.saved().plans[0].river,path.river);assert.deepEqual(p.saved().plans[0].pathIds,[path.id]);assert.equal(p.saved().plans[0].milestones[0].actions.length,2);let saved=p.saved();p.close();
+p=await page('plans',saved);p.click(`[data-select="${saved.plans[0].id}"]`);p.click('[data-add-detail]');assert.ok(p.q('[data-milestone-editor]'));p.click('[data-remove-milestone]');p.click('[data-cancel]');p.click('[data-edit]');p.fill('notes','重新编辑后保存');p.click('button[type=submit]');assert.equal(p.saved().plans[0].notes,'重新编辑后保存');p.click('[data-action-toggle]');assert.equal(p.saved().plans[0].milestones[0].actions[0].done,true);saved=p.saved();p.close();
+p=await page('growth',saved);p.click('[data-new]');p.fill('name','<img src=x onerror=alert(1)>');p.fill('action','完成了访谈笔记');p.change('planId',saved.plans[0].id);p.change('milestoneId',saved.plans[0].milestones[0].id);p.click('button[type=submit]');assert.equal(document.querySelector('.workspace-paper img'),null);saved=p.saved();p.close();
+p=await page('growth',saved);p.click('[data-group="river"]');assert.match(p.q('.growth-record-group h3').textContent,/能力之河/);p.click('[data-group="path"]');assert.match(p.q('.growth-record-group h3').textContent,/研究表达路径/);p.close();
+console.log('DOM integration passed: path-derived river, axis hierarchy, milestone creation, growth grouping and safe text.');
+const orphan={...newPlan(),name:'旧独立计划',capitals:['human']};
+p=await page('plans',{...base,plans:[orphan]});p.click(`[data-select="${orphan.id}"]`);p.click('[data-edit]');assert.equal(p.q('[name=pathId]').value,'');p.fill('notes','只改备注');p.click('button[type=submit]');assert.match(p.q('[data-form-error]').textContent,/路径/);assert.deepEqual(p.saved().plans[0].pathIds,[]);p.close();
+p=await page('plans',saved);p.click(`[data-select="${saved.plans[0].id}"]`);const checkbox=p.q('[data-action-toggle]'),before=checkbox.checked,write=window.Storage.prototype.setItem;window.Storage.prototype.setItem=()=>{throw Error('quota');};checkbox.click();assert.equal(checkbox.checked,before);assert.match(p.q('#workspace-notice').textContent,/保存/);window.Storage.prototype.setItem=write;p.close();
+p=await page('growth',saved);p.click('[data-edit]');p.fill('action','分组切换中尚未保存的行动');p.click('[data-group="path"]');assert.equal(p.q('[name=action]').value,'分组切换中尚未保存的行动');p.close();
+console.log('Workspace boundaries passed: no implicit reparenting, failed checkbox rollback and growth draft retention.');
