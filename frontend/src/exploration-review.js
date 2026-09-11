@@ -5,6 +5,7 @@ const capitals={human:'人力资本',social:'社会资本',psychological:'心理
 const topics={financial:'财务条件',physical:'身体条件',evidence:'证明',river:'河流关联',capital:'资本关联',direction:'未来方向',conflict:'相互矛盾的回答'};
 const reasons={skipped:'你选择了跳过，继续保持未知。',not_asked:'本轮尚未询问必要信息。',insufficient_evidence:'已有信息还不足以下结论。',conflicting_inputs:'回答中存在冲突，需要进一步澄清。'};
 const inputs={q1:'当前选择',q2:'影响决定的因素',q3:'经历',q4:'具体行动',q5:'成果与来源'};
+const ruleNames={R01:'经历整理',R03:'人力关联',R07:'生存归属',R08:'能力归属',R09:'热爱归属',R10:'方向行动'};
 export const displayValue=value=>({course:'课程 / 研究',work:'工作任务',project:'项目 / 作品',collaboration:'协作经历',interest:'长期兴趣实践',organize:'整理信息或需求',create:'制作具体成果',coordinate:'协调分工',solve:'解决具体问题',research:'研究与分析',practice:'持续练习',artifact:'完成可查看成果',problem:'解决一个具体问题',feedback:'得到他人反馈',continued:'持续做了一段时间',unclear:'暂时没有明确结果',none:'暂时没有来源',other:'其他记录'}[value]??value);
 export function reviewItems(proposal){
  return Object.entries(reviewFields).flatMap(([field,target])=>(proposal[field]??[]).map(item=>{
@@ -12,7 +13,8 @@ export function reviewItems(proposal){
   const body=item[editField]??reasons[item.reason]??'需要继续补充。';
   const title={claims:'当前理解',evidence_drafts:'经历草稿',capital_links:`资本关联 · ${capitals[item.capital]}`,river_links:`河流关联 · ${rivers[item.river]}`,future_direction_drafts:`未来方向 · ${rivers[item.river]}`,unknowns:`保持未知 · ${topics[item.topic]}`}[field];
   const detail=field==='evidence_drafts'?`经历：${displayValue(item.experience)}；行动：${item.actions.map(displayValue).join('、')}；结果：${(item.result??'尚未提供').split('、').map(displayValue).join('、')}`:field==='future_direction_drafts'?`支持：${item.support}；待验证：${item.unknown}；下一步：${item.next_action}`:'';
-  return {id:item.id,field,target,editField,title,body,detail,source:(item.input_refs??[]).map(id=>inputs[id]??id).join('、')||'本轮未提供',limit:item.uncertainty??item.limitations?.join('；')??(field==='unknowns'?reasons[item.reason]:'用户确认只表示接受这条理解，仍需实践验证。')};
+  const basis=(item.basis_refs??item.input_refs??[]).map(id=>inputs[id]??id).join('、')||'本轮未提供';
+  return {id:item.id,field,target,editField,title,body,detail,source:(item.input_refs??[]).map(id=>inputs[id]??id).join('、')||'本轮未提供',basis,rule:item.rule_id?`${ruleNames[item.rule_id]??'规则整理'} · ${item.rule_id} v${item.rule_version??'0.1'}`:'用户选择或未知保留',limit:item.uncertainty??item.limitations?.join('；')??(field==='unknowns'?reasons[item.reason]:'用户确认只表示接受这条理解，仍需实践验证。')};
  }));
 }
 export function confirmReview(proposal,cards,edits={}){
