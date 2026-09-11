@@ -1,6 +1,6 @@
 import {createGrowthProof} from './growth-proof.js';
 import {browserStorage} from './exploration-storage.js';
-import {growthContext,capitalNames,riverNames,saveWorkspaceItem,growthTypes,newGrowth,readWorkspace,commitWorkspace,upsertItem,deleteItem,validDate} from './workspace-model.js';
+import {growthContext,capitalNames,riverNames,saveWorkspaceItem,growthTypes,newGrowth,commitWorkspace,upsertItem,deleteItem,validDate} from './workspace-model.js';
 import {showFormError} from './workspace-form.js';
 import {workspaceConnection,readActiveWorkspace as readWorkspace,activeWorkspaceLabel} from './workspace-connection.js';
 import {workspaceSourceMarkup,guardWorkspaceWrite} from './workspace-feedback.js';
