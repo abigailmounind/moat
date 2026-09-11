@@ -18,6 +18,7 @@
 | [产品决策](PRODUCT_DECISIONS.md) | 已确认产品/设计决定、理由及修订依据 | 工程建议不升级为用户确认 |
 | [设计上下文](DESIGN_CONTEXT.md) | 视觉方向、参考层级与布局原则 | 资产明细交给资产索引 |
 | [交互规范](INTERACTION_SPEC.md) / [动效规范](MOTION_SPEC.md) | 触发、退出、焦点、状态协调 / 动画与降级 | 不另定数据归属或持久化规则 |
+| [无 AI 规则规范](RULES_SPEC.md) | 规则依据、允许/禁止推断、依赖失效与固定内容案例；当前为规划基线 | 不把规划或格式校验当作实现和事实验收 |
 | [探索规范](EXPLORATION_SPEC.md) | 候选、确认、映射、保存及隐私语义 | 页面顺序由最短流程维护 |
 | [最短探索流程](STAGE10_MINIMUM_FLOW.md) | 当前页面、题目、继续条件与走查 | 不重复候选映射算法 |
 | [工作区规范](STAGE11_WORKSPACES.md) | 路径、计划、里程碑、成长、快照及兼容操作语义 | 代码结构与 API 参数引用工程文档 |
@@ -66,6 +67,7 @@
 
 | 记录 | 对应范围 |
 |---|---|
+| [本地规则审查](reports/rules-audit.md) | 卡点推河、固定资本、无成果和删除依据后方向残留的源码与合成复现 |
 | [会话退出基础](reports/session-revocation.md) | 当前令牌撤销、数据保留、失败处理与 PostgreSQL/HTTP 重启回归 |
 | [PostgreSQL 生命周期验证](reports/postgres-lifecycle.md) | 真实 SQL 回滚、写入/删除竞争、成长证明与导出删除跨 Node 重启验证 |
 | [跨保存位置保护](reports/workspace-source-guard.md) | 删除连接或切换位置后拒绝旧快照跨来源提交 |
