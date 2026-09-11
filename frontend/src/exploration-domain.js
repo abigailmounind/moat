@@ -55,6 +55,22 @@ export function runSyntheticAnalysis(session){
  };
 }
 
+// Explicit no-AI fallback: preserve only what the user entered and keep all
+// interpretation open for manual review. This is intentionally not a
+// reduced copy of the synthetic rule proposal.
+export function buildManualProposal(session){
+ const byId=Object.fromEntries(session.answers.map(answer=>[answer.questionId,answer]));
+ const actions=byId.q4?.value??[],outcomes=byId.q5?.value?.outcomes??[],prefix=safeId(session.id);
+ if(!byId.q3?.value||!actions.length||!outcomes.length)throw new Error('analysis_input_incomplete');
+ const evidenceId=prefix+'_manual_evidence';
+ return {contract_version:'0.1',session_id:session.id,
+  claims:[],
+  evidence_drafts:[{id:evidenceId,title:'手工记录的一段实践',experience:byId.q3.value,actions,result:outcomes.join('、'),source:byId.q5.value.source,limitations:['没有自动判断资本、河流或方向；可以在后续实践中补充'],source_type:'user_self_report',confirmation_status:'pending',input_refs:['q3','q4','q5']}],
+  capital_links:[],river_links:[],future_direction_drafts:[],
+  unknowns:[{id:prefix+'_manual_unknown_capital',topic:'capital',reason:'insufficient_evidence',input_refs:['q3','q4','q5']},{id:prefix+'_manual_unknown_river',topic:'river',reason:'insufficient_evidence',input_refs:['q3','q4','q5']},{id:prefix+'_manual_unknown_direction',topic:'direction',reason:'insufficient_evidence',input_refs:['q1','q3','q4']}]
+ };
+}
+
 export function confirmAnalysis(proposal,cards,edits={}){
  if(!Object.hasOwn(cards,'experience'))return confirmReview(proposal,cards,edits);
  const accepted=id=>['confirmed','modified'].includes(cards[id]);
