@@ -19,12 +19,15 @@
     "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"},
     "text": {"type": "string", "minLength": 1, "maxLength": 1000},
     "status": {"enum": ["pending"]},
+    "rule_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9_-]{2,31}$"},
+    "rule_version": {"const": "0.1"},
+    "basis_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}},
     "refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}},
     "claim": {
       "type": "object", "additionalProperties": false,
       "required": ["id", "kind", "text", "source_type", "confirmation_status", "input_refs"],
       "properties": {
-        "id": {"$ref": "#/$defs/id"}, "kind": {"enum": ["situation", "experience", "preference", "constraint"]},
+        "id": {"$ref": "#/$defs/id"}, "rule_id": {"$ref": "#/$defs/rule_id"}, "rule_version": {"$ref": "#/$defs/rule_version"}, "basis_refs": {"$ref": "#/$defs/basis_refs"}, "kind": {"enum": ["situation", "experience", "preference", "constraint"]},
         "text": {"$ref": "#/$defs/text"}, "source_type": {"const": "ai_proposal"},
         "confirmation_status": {"$ref": "#/$defs/status"}, "input_refs": {"$ref": "#/$defs/refs"}
       }
@@ -33,7 +36,7 @@
       "type": "object", "additionalProperties": false,
       "required": ["id", "title", "experience", "actions", "result", "source", "limitations", "source_type", "confirmation_status", "input_refs"],
       "properties": {
-        "id": {"$ref": "#/$defs/id"}, "title": {"$ref": "#/$defs/text"}, "experience": {"$ref": "#/$defs/text"},
+        "id": {"$ref": "#/$defs/id"}, "rule_id": {"$ref": "#/$defs/rule_id"}, "rule_version": {"$ref": "#/$defs/rule_version"}, "basis_refs": {"$ref": "#/$defs/basis_refs"}, "title": {"$ref": "#/$defs/text"}, "experience": {"$ref": "#/$defs/text"},
         "actions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
         "result": {"type": ["string", "null"], "maxLength": 1000}, "source": {"type": ["string", "null"], "maxLength": 1000},
         "limitations": {"type": "array", "items": {"$ref": "#/$defs/text"}},
@@ -44,7 +47,7 @@
       "type": "object", "additionalProperties": false,
       "required": ["id", "evidence_id", "capital", "aspect", "explanation", "confirmation_status", "input_refs"],
       "properties": {
-        "id": {"$ref": "#/$defs/id"}, "evidence_id": {"$ref": "#/$defs/id"},
+        "id": {"$ref": "#/$defs/id"}, "rule_id": {"$ref": "#/$defs/rule_id"}, "rule_version": {"$ref": "#/$defs/rule_version"}, "basis_refs": {"$ref": "#/$defs/basis_refs"}, "evidence_id": {"$ref": "#/$defs/id"},
         "capital": {"enum": ["human", "social", "psychological", "financial", "physical"]},
         "aspect": {"$ref": "#/$defs/text"}, "explanation": {"$ref": "#/$defs/text"},
         "confirmation_status": {"$ref": "#/$defs/status"}, "input_refs": {"$ref": "#/$defs/refs"}
@@ -54,7 +57,7 @@
       "type": "object", "additionalProperties": false,
       "required": ["id", "evidence_id", "river", "explanation", "uncertainty", "confirmation_status", "input_refs"],
       "properties": {
-        "id": {"$ref": "#/$defs/id"}, "evidence_id": {"$ref": "#/$defs/id"},
+        "id": {"$ref": "#/$defs/id"}, "rule_id": {"$ref": "#/$defs/rule_id"}, "rule_version": {"$ref": "#/$defs/rule_version"}, "basis_refs": {"$ref": "#/$defs/basis_refs"}, "evidence_id": {"$ref": "#/$defs/id"},
         "river": {"enum": ["survival", "ability", "love"]}, "explanation": {"$ref": "#/$defs/text"},
         "uncertainty": {"type": ["string", "null"], "maxLength": 1000},
         "confirmation_status": {"$ref": "#/$defs/status"}, "input_refs": {"$ref": "#/$defs/refs"}
@@ -64,7 +67,7 @@
       "type": "object", "additionalProperties": false,
       "required": ["id", "river", "name", "support", "unknown", "next_action", "confirmation_status", "input_refs"],
       "properties": {
-        "id": {"$ref": "#/$defs/id"}, "river": {"enum": ["survival", "ability", "love"]}, "name": {"$ref": "#/$defs/text"},
+        "id": {"$ref": "#/$defs/id"}, "rule_id": {"$ref": "#/$defs/rule_id"}, "rule_version": {"$ref": "#/$defs/rule_version"}, "basis_refs": {"$ref": "#/$defs/basis_refs"}, "evidence_id": {"$ref": "#/$defs/id"}, "river": {"enum": ["survival", "ability", "love"]}, "name": {"$ref": "#/$defs/text"},
         "support": {"$ref": "#/$defs/text"}, "unknown": {"$ref": "#/$defs/text"}, "next_action": {"$ref": "#/$defs/text"},
         "confirmation_status": {"$ref": "#/$defs/status"}, "input_refs": {"$ref": "#/$defs/refs"}
       }

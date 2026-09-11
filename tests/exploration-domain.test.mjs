@@ -8,6 +8,7 @@ const initialUi=()=>({answers:{situation:'change',situationOther:'',blockers:['a
 
 test('页面回答转换为带版本和跳过状态的会话输入',()=>{const value=session();assert.equal(value.flowVersion,'stage10-minimum-v0.1');assert.equal(value.answers.length,5);assert.equal(value.answers.find(x=>x.questionId==='q2').skipped,false);});
 test('合成分析只产生待确认、有引用的三河五资本候选',()=>{const proposal=runSyntheticAnalysis(session());assert.deepEqual(proposal.capital_links.map(x=>x.capital),['human']);assert.deepEqual(proposal.river_links.map(x=>x.river),['ability']);assert.ok(proposal.evidence_drafts.every(x=>x.input_refs.length&&x.confirmation_status==='pending'));});
+test('自动提议保留规则版本、实际输入依据和证明依赖',()=>{const proposal=runSyntheticAnalysis(session());for(const item of [...proposal.claims,...proposal.evidence_drafts,...proposal.capital_links,...proposal.river_links,...proposal.future_direction_drafts]){assert.match(item.rule_id,/^R/);assert.equal(item.rule_version,'0.1');assert.ok(item.basis_refs.length);assert.ok(item.basis_refs.every(ref=>item.input_refs.includes(ref)));}assert.equal(proposal.future_direction_drafts[0].evidence_id,proposal.evidence_drafts[0].id);});
 test('本地候选规则不会把三种输入都固定到能力之河',()=>{
  const proposalFor=answers=>{const value=createExplorationSession();value.answers=answersFromUi({...ui,answers:{...ui.answers,...answers}});return runSyntheticAnalysis(value);};
  assert.equal(proposalFor({experience:'interest'}).river_links[0].river,'love');

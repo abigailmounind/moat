@@ -46,11 +46,11 @@ export function runSyntheticAnalysis(session){
  const unknownRivers=['survival','ability','love'].filter(river=>river!==candidate.river),[directionName,directionSupport,directionUnknown]=candidate.direction,candidateRefs=['q1','q2','q3','q4','q5'].filter(id=>byId[id]);
  return {
   contract_version:'0.1',session_id:session.id,
-  claims:[{id:prefix+'_claim_experience',kind:'experience',text:'用户描述了一段包含具体行动的实践。',source_type:'ai_proposal',confirmation_status:'pending',input_refs:['q3','q4','q5']}],
-  evidence_drafts:[{id:evidenceId,title:'一段具体实践',experience:byId.q3.value,actions,result:outcomes.join('、'),source:byId.q5.value.source,limitations:['熟练程度与跨情境表现仍待验证'],source_type:'user_self_report',confirmation_status:'pending',input_refs:['q3','q4','q5']}],
-  capital_links:hasReportedOutcome?[{id:capitalId,evidence_id:evidenceId,capital:'human',aspect:'具体行动与已报告结果',explanation:'用户描述了实践中的具体行动，并报告了一个结果线索。',confirmation_status:'pending',input_refs:['q4','q5']}]:[],
-  river_links:hasReportedOutcome?[{id:riverId,evidence_id:evidenceId,river:candidate.river,explanation:candidate.explanation,uncertainty:candidate.uncertainty,confirmation_status:'pending',input_refs:['q3','q4','q5']}]:[],
-  future_direction_drafts:hasReportedOutcome?[{id:prefix+'_direction_'+candidate.river,evidence_id:evidenceId,river:candidate.river,name:directionName,support:directionSupport,unknown:directionUnknown,next_action:'选一个规模小的行动，记下过程、结果和自己的感受。',confirmation_status:'pending',input_refs:['q3','q4','q5']}]:[],
+  claims:[{id:prefix+'_claim_experience',kind:'experience',text:'用户描述了一段包含具体行动的实践。',source_type:'ai_proposal',confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:'R01',rule_version:'0.1',basis_refs:['q3','q4','q5']}],
+  evidence_drafts:[{id:evidenceId,title:'一段具体实践',experience:byId.q3.value,actions,result:outcomes.join('、'),source:byId.q5.value.source,limitations:['熟练程度与跨情境表现仍待验证'],source_type:'user_self_report',confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:'R01',rule_version:'0.1',basis_refs:['q3','q4','q5']}],
+  capital_links:hasReportedOutcome?[{id:capitalId,evidence_id:evidenceId,capital:'human',aspect:'具体行动与已报告结果',explanation:'用户描述了实践中的具体行动，并报告了一个结果线索。',confirmation_status:'pending',input_refs:['q4','q5'],rule_id:'R03',rule_version:'0.1',basis_refs:['q4','q5']}]:[],
+  river_links:hasReportedOutcome?[{id:riverId,evidence_id:evidenceId,river:candidate.river,explanation:candidate.explanation,uncertainty:candidate.uncertainty,confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:candidate.river==='love'?'R09':candidate.river==='survival'?'R07':'R08',rule_version:'0.1',basis_refs:['q3','q4','q5']}]:[],
+  future_direction_drafts:hasReportedOutcome?[{id:prefix+'_direction_'+candidate.river,evidence_id:evidenceId,river:candidate.river,name:directionName,support:directionSupport,unknown:directionUnknown,next_action:'选一个规模小的行动，记下过程、结果和自己的感受。',confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:'R10',rule_version:'0.1',basis_refs:['q3','q4','q5']}]:[],
   unknowns:unknownRivers.map(river=>({id:prefix+'_unknown_'+river,topic:'river',reason:'insufficient_evidence',input_refs:candidateRefs}))
  };
 }
