@@ -154,6 +154,8 @@ moat/
 
 ## 7. 验证与交接要求
 
+`check-postgres.mjs` 调用 `tests/fixtures/postgres-lifecycle-check.mjs`，在隔离 schema 中注入真实 SQL 失败并协调写入/删除顺序，检查数据、版本、会话和回执的一致性；同时覆盖 HTTP 成长证明、导出删除及服务重启。证据见 [生命周期验证](reports/postgres-lifecycle.md)。
+
 | 改动 | 必需关注的证据 | 不足以证明 |
 |---|---|---|
 | 领域、确认、存储与版本 | 正常、非法输入、失败及关键边界回归 | 格式合法不等于事实核实 |

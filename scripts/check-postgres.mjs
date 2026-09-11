@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {checkPostgresLifecycle} from '../tests/fixtures/postgres-lifecycle-check.mjs';
 import {checkDataLifecycle} from '../tests/fixtures/data-lifecycle-check.mjs';
 import {checkGrowthCommands} from '../tests/fixtures/growth-api-check.mjs';
 import {randomBytes,createHash} from 'node:crypto';
@@ -47,6 +48,7 @@ try{
   assert.equal((await pool.query('SELECT count(*)::integer AS count FROM '+table+' WHERE subject_id=$1',[deletedSubject])).rows[0].count,0);
  }
  console.log('PostgreSQL: data export snapshot and subject deletion cascade passed.');
+ await checkPostgresLifecycle(pool,pool2);
  await checkGrowthCommands(repository);
  console.log('PostgreSQL: growth commands, explicit proof confirmation and empty import passed.');
  const {subject,token}=await repository.createAnonymousSession(),other=await otherRepository.createAnonymousSession();
@@ -135,6 +137,34 @@ try{
  assert.equal((await service.get('/api/v1/plans/plan-1',{headers:{cookie}})).status,200);
  assert.equal((await service.get('/api/v1/paths/path-1')).status,401);
  console.log('PostgreSQL: actual HTTP, Node service restart, persisted session/data and retry receipts passed.');
+
+ const request=async(route,method,payload,key)=>{
+  const response=await service.get(route,{method,headers:{origin:service.origin,cookie,'content-type':'application/json',...(key?{'idempotency-key':key}:{})},...(payload?{body:JSON.stringify(payload)}:{})});
+  return {response,data:await response.json()};
+ };
+ const created=await request('/api/v1/growth-records','POST',{revision:2,record:growthItem()},'http-growth');
+ assert.equal(created.response.status,200);
+ const proofPayload={revision:3,confirmed:true,selection:{capital:'human',river:'ability',explanation:'合成验证依据'}};
+ const confirmed=await request('/api/v1/growth-records/growth-1/proof','POST',proofPayload,'http-proof');
+ assert.equal(confirmed.response.status,200);
+ const proofSnapshot=confirmed.data.workspace.growth[0].proof;
+ await service.stop();service=await startService();
+ const proofReplay=await request('/api/v1/growth-records/growth-1/proof','POST',proofPayload,'http-proof');
+ assert.equal(proofReplay.response.headers.get('idempotency-replayed'),'true');
+ const exported=await request('/api/v1/data/export','GET');
+ assert.equal(exported.response.status,200);
+ assert.match(exported.response.headers.get('content-disposition'),/attachment/);
+ assert.deepEqual(exported.data.data.workspace.growth[0].proof,proofSnapshot);
+ const subjectId=exported.data.subject.id;
+ const staleDelete=await request('/api/v1/data','DELETE',{confirmed:true,subjectId,revision:3});
+ assert.equal(staleDelete.response.status,409);
+ const removed=await request('/api/v1/data','DELETE',{confirmed:true,subjectId,revision:4});
+ assert.equal(removed.response.status,200);assert.equal(removed.data.deleted,true);
+ await service.stop();service=await startService();
+ assert.equal((await service.get('/api/v1/data/export',{headers:{cookie}})).status,401);
+ assert.equal(await repository.readBootstrap(subjectId),null);
+ console.log('PostgreSQL: HTTP growth/proof replay, export, stale deletion rejection and deletion across restart passed.');
+
 }finally{
  if(service)await service.stop();
  await Promise.all([pool.end(),pool2.end()]);

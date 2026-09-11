@@ -122,6 +122,6 @@ PostgreSQL 写入先取得工作区行锁，再读回执、核对版本、变更
 
 tests/product-repository.test.mjs、product-service.test.mjs 验证聚合、异步仓储、版本和回执；product-objects.test.mjs 验证对象接口、非法输入、归属变更、快照保留和失败重试。共享校验与浏览器兼容继续由 shared-domain 和工作区相关测试覆盖。
 
-check-product-http.mjs 使用独立内存临时服务检查全部浏览器模块。check-postgres.mjs 必须指定 MOAT_TEST_DATABASE_URL，在随机 schema 中验证真实迁移、跨连接并发、回滚、固定快照、到期、关系变更与 Node 重启恢复；见 [持久化首轮报告](reports/backend-persistence-v1.md)。
+check-product-http.mjs 使用独立内存临时服务检查全部浏览器模块。check-postgres.mjs 必须指定 MOAT_TEST_DATABASE_URL，在随机 schema 中验证真实迁移、跨连接并发、回滚、固定快照、到期、关系变更与 Node 重启恢复；见 [持久化首轮报告](reports/backend-persistence-v1.md) 与 [生命周期验证](reports/postgres-lifecycle.md)。后者补齐六种操作在回执保存失败后的回滚与原键重试、删除失败回滚、写入/删除竞争，以及 HTTP 成长证明、导出删除跨重启检查。
 
 这些检查不等于数据库灾备、浏览器同步、跨设备登录或用户验收。
