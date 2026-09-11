@@ -1,5 +1,17 @@
 # 人生护城河 · 我的三河地图
 
+
+一个面向人生与职业决策场景的 AI-native 产品实验：通过「生存之河、能力之河、热爱之河」持续整理个人经历、能力与选择，逐步形成未来路径和可执行的护城河计划。
+
+### 🌐 Live Demo
+
+**[体验 Personal Moat →](https://themoat.pages.dev/)**
+
+当前 Demo 已开放三河地图、结构化探索、结果确认、未来路径、护城河计划和成长记录等核心流程。
+
+> 当前为公开演示版本。用户数据主要保存在浏览器本地；账号、跨设备同步、生产数据库和真实 AI 服务仍在开发中。
+
+
 原生 JavaScript、DOM、SVG 与 CSS 的本地网页原型，配有 Node 静态服务与开发态产品 API。浏览器默认保存个人数据；服务端可选择内存或 PostgreSQL 仓储。工作区已有显式连接与复制入口，默认不迁移。当前没有账号、跨设备恢复或真实模型调用。
 
 开始协作先读 [AGENTS](AGENTS.md)、[PRD](PRD.md) 和 [milestones](milestones.md)。工程职责与开发规则见 [工程结构与开发规范](docs/ENGINEERING_STRUCTURE.md)，按任务阅读见 [文档导航](docs/README.md)。
