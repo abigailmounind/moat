@@ -82,9 +82,18 @@ DOM 检查需要单独可用的 jsdom，未列入生产依赖；先核实实际�
 node scripts/workspace-dom-check.mjs /path/to/jsdom/lib/api.js
 node scripts/stage11-dom-check.mjs /path/to/jsdom/lib/api.js
 node scripts/scaffold-dom-check.mjs /path/to/jsdom/lib/api.js
+node scripts/manual-exploration-dom-check.mjs /path/to/jsdom/lib/api.js
 ```
 
 DOM 和 HTTP 检查不验证真实浏览器布局、触控或视觉；需要时另做浏览器走查。按改动选择证据见工程规范；纯文档修改只核对现状、规则、路径、链接及差异，不生成资产或重跑无关测试。
+
+无 AI 本地闭环可用外置 Playwright 和 Chromium 做真实浏览器回归；先运行 `npm start`，再执行：
+
+```sh
+node scripts/browser-flow-check.mjs /path/to/playwright/index.mjs /path/to/chrome http://127.0.0.1:4173
+```
+
+脚本覆盖 1440px 桌面与 390px 触控模拟视口、键盘进入手工整理、确认保存、路径、计划、里程碑、成长、证明、刷新恢复和地图回看，并检查页面异常、意外 API 请求及横向溢出。浏览器必须具备所需系统运行库；触控模拟不等于实体设备验收。
 
 ## API 与数据边界
 

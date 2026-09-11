@@ -150,11 +150,15 @@ moat/
 | 样式与资产 | 复用现有 CSS 与资产；修改前核对最终覆盖规则；源、派生文件和运行引用一起核对，细则只在资产索引维护 |
 | 改动粒度 | 保留用户工作区修改；新代码按清楚的逻辑块书写，注释解释边界与理由；不夹带全仓格式化或无关依赖升级 |
 
-当前没有 formatter、lint 或构建检查配置，不能把以上约定说成已由工具强制。新增工具及依赖应说明具体收益和影响，在已有任务授权内执行。
+当前没有 formatter、lint 或构建检查配置。现有 `scripts/check.mjs` 会递归使用 Node `--check` 解析 frontend/src 与 shared 的 JavaScript 模块，覆盖动态加载页面的语法与重复导入绑定；不执行模块，不验证导出链接或浏览器运行行为。不能把以上全部约定说成已由工具强制。新增工具及依赖应说明具体收益和影响，在已有任务授权内执行。
 
 ## 7. 验证与交接要求
 
 `check-postgres.mjs` 调用 `tests/fixtures/postgres-lifecycle-check.mjs`，在隔离 schema 中注入真实 SQL 失败并协调写入/删除顺序，检查数据、版本、会话和回执的一致性；同时覆盖 HTTP 成长证明、导出删除及服务重启。证据见 [生命周期验证](reports/postgres-lifecycle.md)。
+
+Pages 静态发布由 `scripts/build-pages.mjs` 在测试和静态检查通过后生成独立临时目录；`scripts/check-pages.mjs` 验证线上页面、模块语法与资源响应。部署流程及本轮证据见 [Pages 成长页发布](reports/pages-growth-release.md)。这些检查不替代真实浏览器行为与视觉验收。
+
+`scripts/browser-flow-check.mjs` 使用外置 Playwright 与 Chromium，连续验证无 AI 本地闭环的桌面和窄屏浏览器行为；依赖和浏览器不进入生产依赖。运行参数见根 README，本轮证据见 [手工探索入口验证](reports/manual-exploration-entry.md)。触控模拟和无横向溢出检查不替代实体设备或字体视觉验收。
 
 | 改动 | 必需关注的证据 | 不足以证明 |
 |---|---|---|
