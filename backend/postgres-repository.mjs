@@ -95,6 +95,10 @@ export function createPostgresProductRepository({pool,tokenFactory=()=>randomByt
    const result=await pool.query('SELECT s.id,s.kind,s.created_at FROM moat_sessions x JOIN moat_subjects s ON s.id=x.subject_id WHERE x.token_hash=$1 AND x.expires_at>clock_timestamp()',[hash(token)]);
    return result.rowCount?{id:result.rows[0].id,kind:result.rows[0].kind,createdAt:new Date(result.rows[0].created_at).toISOString()}:null;
   },
+  async revokeSession(token){
+   if(typeof token==='string'&&token)await pool.query('DELETE FROM moat_sessions WHERE token_hash=$1',[hash(token)]);
+   return {ok:true};
+  },
   async readBootstrap(subjectId){
    if(!validSubject(subjectId))return null;
    return transaction(pool,async client=>{

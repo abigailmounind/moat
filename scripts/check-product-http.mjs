@@ -57,6 +57,10 @@ try{
  assert.match(removal.headers.get('set-cookie'),/Max-Age=0/);
  assert.equal((await get('/api/v1/data/export',{headers:{cookie}})).status,401);
  assert.equal((await get('/api/v1/workspace',{headers:{cookie:otherCookie}})).status,200);
+ const logout=await get('/api/v1/session',{method:'DELETE',headers:{origin,cookie:otherCookie}});
+ assert.equal(logout.status,200);assert.match(logout.headers.get('set-cookie'),/Max-Age=0/);
+ assert.equal((await get('/api/v1/workspace',{headers:{cookie:otherCookie}})).status,401);
+ assert.equal((await get('/api/v1/session',{method:'DELETE',headers:{origin,cookie:otherCookie}})).status,200);
  console.log(`Product HTTP checks passed: ${seen.size} browser modules, session isolation, concurrent retries, conflict handling, data export and deletion.`);
 }finally{
  child.kill('SIGTERM');

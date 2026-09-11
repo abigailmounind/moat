@@ -66,6 +66,7 @@
 
 | 记录 | 对应范围 |
 |---|---|
+| [会话退出基础](reports/session-revocation.md) | 当前令牌撤销、数据保留、失败处理与 PostgreSQL/HTTP 重启回归 |
 | [PostgreSQL 生命周期验证](reports/postgres-lifecycle.md) | 真实 SQL 回滚、写入/删除竞争、成长证明与导出删除跨 Node 重启验证 |
 | [跨保存位置保护](reports/workspace-source-guard.md) | 删除连接或切换位置后拒绝旧快照跨来源提交 |
 | [数据管理页面验证](reports/data-management-ui.md) | 导出与二次确认删除、待核对标记、独立缓存清理 |

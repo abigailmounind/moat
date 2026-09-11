@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {checkSessionRevocation} from '../tests/fixtures/session-revocation-check.mjs';
 import {checkPostgresLifecycle} from '../tests/fixtures/postgres-lifecycle-check.mjs';
 import {checkDataLifecycle} from '../tests/fixtures/data-lifecycle-check.mjs';
 import {checkGrowthCommands} from '../tests/fixtures/growth-api-check.mjs';
@@ -48,6 +49,7 @@ try{
   assert.equal((await pool.query('SELECT count(*)::integer AS count FROM '+table+' WHERE subject_id=$1',[deletedSubject])).rows[0].count,0);
  }
  console.log('PostgreSQL: data export snapshot and subject deletion cascade passed.');
+ await checkSessionRevocation(repository);
  await checkPostgresLifecycle(pool,pool2);
  await checkGrowthCommands(repository);
  console.log('PostgreSQL: growth commands, explicit proof confirmation and empty import passed.');
@@ -164,6 +166,17 @@ try{
  assert.equal((await service.get('/api/v1/data/export',{headers:{cookie}})).status,401);
  assert.equal(await repository.readBootstrap(subjectId),null);
  console.log('PostgreSQL: HTTP growth/proof replay, export, stale deletion rejection and deletion across restart passed.');
+ const logoutSession=await service.get('/api/v1/session',{method:'POST',headers:{origin:service.origin}});
+ const logoutCookie=logoutSession.headers.get('set-cookie').split(';')[0];
+ const logoutSubject=(await logoutSession.json()).session.subject.id;
+ const logout=await service.get('/api/v1/session',{method:'DELETE',headers:{origin:service.origin,cookie:logoutCookie}});
+ assert.equal(logout.status,200);assert.match(logout.headers.get('set-cookie'),/Max-Age=0/);
+ await service.stop();service=await startService();
+ assert.equal((await service.get('/api/v1/session',{headers:{cookie:logoutCookie}})).status,401);
+ assert.ok(await repository.readBootstrap(logoutSubject));
+ assert.equal((await service.get('/api/v1/session',{method:'DELETE',headers:{origin:service.origin,cookie:logoutCookie}})).status,200);
+ console.log('PostgreSQL: session revocation preserves data and persists across Node restart.');
+
 
 }finally{
  if(service)await service.stop();

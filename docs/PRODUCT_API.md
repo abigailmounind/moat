@@ -12,6 +12,7 @@
 | GET /api/v1/health | {status:"ok",apiVersion:"1"} | 支持 HEAD；表示 HTTP 可响应，不持续探测数据库 |
 | GET /api/v1/capabilities | 持久化、幂等、对象资源、身份、分析模式 | 按实际仓储报告 memory/false 或 postgres/true；模型默认关闭 |
 | POST /api/v1/session | {session:{subject}} | 校验 Origin；创建为 201，已有会话为 200 |
+| DELETE /api/v1/session | {apiVersion:"1",signedOut:true,scope:"current_session"} | 同源；撤销当前令牌，成功后清 Cookie；重复退出可重试 |
 | GET /api/v1/session | {session:{subject}} | 有效服务端会话 |
 | GET /api/v1/bootstrap | {apiVersion,subject,data:{profile,workspace}} | 从会话决定主体 |
 | GET /api/v1/workspace | {apiVersion,workspace} | 当前主体 |
@@ -25,6 +26,12 @@
 表中多个资源简写共用 `/api/v1` 前缀。能力枚举 rules/manual 不表示服务端分析接口已实现；bootstrap.profile 仍为空探索档案，暂无探索确认写入或迁移接口。页面默认本地保存；数据与同步页明确确认后可连接服务器工作区。探索档案仍独立保存在浏览器。
 
 匿名 Cookie 使用 HttpOnly、SameSite=Lax、Path=/ 和 30 天浏览器有效期；直接 TLS 连接增加 Secure。内存会话随进程消失；PostgreSQL 保存令牌哈希及固定 30 天服务端有效期，过期后不可读取。尚无续期、回收任务、账号恢复或跨设备登录；代理部署仍待建设。
+
+## 当前会话退出
+
+`DELETE /api/v1/session` 校验 Origin，按 Cookie 撤销当前令牌，等待仓储成功后清 Cookie。无令牌、未知令牌和已撤销令牌也返回成功，便于响应丢失后重试；跨源请求返回 403。存储失败返回 503 并保留 Cookie，不伪报成功。
+
+退出保留主体、工作区、探索档案和幂等回执，不等于删除数据或账号注销。其他会话不受影响；随后使用旧令牌发起的受保护请求返回 401。已通过会话检查的在途请求可能完成，退出不声称撤销已经接受的提交。浏览器服务器缓存和待提交记录尚未接入退出流程；当前没有页面退出入口，匿名主体也没有账号恢复方式。
 
 ## 路径与计划对象命令
 
@@ -105,6 +112,7 @@ createProductService({repository}) 等待所有仓储方法，兼容普通值或
 |---|---|
 | kind / durable / idempotency | 报告实际模式与回执策略 |
 | createAnonymousSession() | 创建主体、空档案和工作区，返回 {token,subject} |
+| revokeSession(token) | 撤销当前令牌；不存在时仍返回 ok；不删除主体或工作区 |
 | findSession(token) | 返回 subject 或 null；令牌只在服务端映射主体 |
 | readBootstrap(subjectId) | 返回 {profile,workspace} 或 null |
 | deleteSubject(subjectId,revision) | 同一版本锁下移除主体及关联数据，返回 ok 或 subject_not_found/invalid_workspace/revision_conflict |

@@ -87,7 +87,7 @@
 | 领域 | 接口 | 实现范围 |
 |---|---|---|
 | 系统 | `GET /api/v1/capabilities`、`GET /api/v1/health` | 当前可调用；规则/手工能力枚举不代表已有服务端分析端点 |
-| 会话 | `POST /api/v1/session`、`GET /api/v1/session` | 当前匿名会话；PostgreSQL 有固定服务端有效期，无注册账号、续期或回收任务 |
+| 会话 | `POST /api/v1/session`、`GET /api/v1/session`、`DELETE /api/v1/session` | 当前匿名会话与当前令牌撤销；PostgreSQL 有固定服务端有效期，无注册账号、续期或回收任务 |
 | 启动数据 | `GET /api/v1/bootstrap` | 当前返回主体、空探索档案与该主体工作区；尚无探索档案写入接口 |
 | 工作区聚合 | `GET/PUT /api/v1/workspace` | 当前可调用；结构、会话、版本与幂等检查，不等于完整操作级规则 |
 | 对象级工作区 | `/api/v1/paths`、`/api/v1/plans` | 已实现创建、完整更新、删除、读取及归属规则，工作区级版本；成长记录、证明独立确认/撤回及空工作区导入已实现，持久库专项已通过，见 [生命周期验证](reports/postgres-lifecycle.md) |

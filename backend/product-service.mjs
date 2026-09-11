@@ -59,6 +59,13 @@ export function createProductService({repository=createMemoryProductRepository()
    const created=await repository.createAnonymousSession();
    send(201,{session:{subject:created.subject}},{'Set-Cookie':sessionCookie(req,created.token)});return;
   }
+  if(route==='/api/v1/session'&&req.method==='DELETE'){
+   if(!sameOrigin(req)){fail(403,'origin_rejected','请求来源未通过校验。');return;}
+   const result=await repository.revokeSession(cookieValue(req,SESSION_COOKIE));
+   if(!result?.ok){fail(503,'storage_unavailable','退出尚未确认完成，请重试。',true);return;}
+   send(200,{apiVersion:API_VERSION,signedOut:true,scope:'current_session'},
+    {'Set-Cookie':`${SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax${req.socket?.encrypted?'; Secure':''}`});return;
+  }
   const subject=await repository.findSession(cookieValue(req,SESSION_COOKIE));
   if(route==='/api/v1/session'){
    if(req.method!=='GET'){fail(405,'method_not_allowed','请求方法不受支持。');return;}

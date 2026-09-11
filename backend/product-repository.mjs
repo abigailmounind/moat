@@ -28,6 +28,10 @@ export function createMemoryProductRepository({tokenFactory=()=>randomBytes(32).
    const record=subjects.get(sessions.get(hash(token)));
    return record?clone(record.subject):null;
   },
+  revokeSession(token){
+   if(typeof token==='string'&&token)sessions.delete(hash(token));
+   return {ok:true};
+  },
   readBootstrap(subjectId){
    const record=subjects.get(subjectId);
    return record?clone({profile:record.profile,workspace:record.workspace}):null;

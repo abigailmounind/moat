@@ -165,3 +165,26 @@ test('capacity failures preserve live receipts and report a retryable response',
  assert.equal(full.status,503);assert.equal(full.body.error.code,'idempotency_capacity');assert.equal(full.body.error.retryable,true);
  assert.deepEqual((await put()).body,saved.body);
 });
+
+test('退出撤销服务端会话并清 Cookie，拒绝跨源，失败时保留 Cookie',async()=>{
+ const repository=createMemoryProductRepository(),service=createProductService({repository});
+ const created=await request(service,{method:'POST',url:'/api/v1/session'});
+ const cookie=created.headers['Set-Cookie'].split(';')[0];
+ const rejected=await request(service,{method:'DELETE',url:'/api/v1/session',cookie,origin:'https://other.invalid'});
+ assert.equal(rejected.status,403);assert.equal(rejected.headers['Set-Cookie'],undefined);
+ assert.equal((await request(service,{url:'/api/v1/session',cookie})).status,200);
+ for(const revokeSession of [async()=>{throw Error('private-storage-error');},async()=>({ok:false})]){
+  const failed=await request(createProductService({repository:{...repository,revokeSession}}),{method:'DELETE',url:'/api/v1/session',cookie});
+  assert.equal(failed.status,503);assert.equal(failed.headers['Set-Cookie'],undefined);
+  assert.equal(failed.body.error.code,'storage_unavailable');
+  assert.ok(!JSON.stringify(failed.body).includes('private-storage-error'));
+ }
+ assert.equal((await request(service,{url:'/api/v1/session',cookie})).status,200);
+ for(const currentCookie of [cookie,cookie,'','moat_session=unknown']){
+  const result=await request(service,{method:'DELETE',url:'/api/v1/session',cookie:currentCookie});
+  assert.equal(result.status,200);assert.equal(result.body.signedOut,true);
+  assert.match(result.headers['Set-Cookie'],/Max-Age=0/);
+ }
+ assert.equal((await request(service,{url:'/api/v1/workspace',cookie})).status,401);
+ assert.ok(await repository.readBootstrap(created.body.session.subject.id));
+});
