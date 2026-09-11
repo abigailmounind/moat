@@ -23,4 +23,32 @@ p.click('[data-next]');p.click('[data-next]');assert.match(p.q('.explore-card').
 p=await page('app','',raw);assert.match(p.q('.top-tools').textContent,/我的本地地图/);p.click('#river-ability');assert.match(p.q('#preview').textContent,/这些行动可能在其他情境复用/);p.click('#preview [data-future]');const bridge=p.q('#detail-panel a[href*="direction="]').getAttribute('href');raw=p.raw();p.close();
 p=await page('workspaces',bridge.replace(/^\//,''),raw);assert.match(p.q('#workspace-notice').textContent,/草稿/);assert.equal(p.q('[name=river]').value,'ability');p.click('button[type=submit]');p.click('[data-edit]');p.fill('[name=notes]','切换河流仍要保留');p.click('[data-river=love]');assert.equal(p.q('[name=notes]').value,'切换河流仍要保留');p.click('button[type=submit]');raw=p.raw();p.close();
 p=await page('workspaces',bridge.replace(/^\//,''),raw);assert.match(p.q('#workspace-notice').textContent,/已有保存的路径/);assert.equal(document.querySelector('#workspace-form'),null);assert.match(p.q('.workspace-paper').textContent,/切换河流仍要保留/);p.close();
-console.log('Scaffold DOM passed: dynamic review, escaped edits, save, personal map, direction draft, existing-path reuse and unsaved-input retention.');
+// A shared proof must keep its entry river through detail, future and Escape.
+const {createPrototypeProfile}=await import('../shared/profile.js');
+const {saveExplorationProfile,storageKey}=await import('../frontend/src/exploration-storage.js');
+const profile=createPrototypeProfile();
+for(const id of ['shared','unlinked'])profile.evidence[id]={id,title:`合成证明 ${id}`,experience:'参与项目',actions:['整理信息'],result:null,source:null,limitations:[],source_type:'user_self_report',confirmation_status:'confirmed'};
+for(const river of ['ability','love'])profile.riverLinks[river]={id:river,evidence_id:'shared',river,explanation:`${river} 的确认关联`,uncertainty:null,confirmation_status:'confirmed'};
+const seed={};assert.equal(saveExplorationProfile({setItem:(key,value)=>seed[key]=value},profile).ok,true);
+p=await page('app','',seed);
+for(const entry of ['preview','summary']){
+ if(entry==='preview')p.click('#river-love');else p.click('#map-summary');
+ p.click(`${entry==='preview'?'#preview':'#detail-panel'} [data-proof="shared"][data-river="love"]`);
+ assert.equal(document.activeElement.id,'detail-title');
+ assert.ok(p.q('#river-love').classList.contains('selected'));
+ assert.equal(p.q('#detail-panel [data-future]').dataset.future,'love');
+ p.click('#detail-panel [data-future]');
+ assert.match(p.q('#detail-panel .eyebrow').textContent,/热爱之河/);
+ document.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+ assert.equal(p.q('#detail-panel').hidden,true);
+ assert.equal(p.q('#preview').dataset.river,'love');
+ assert.equal(document.activeElement.id,entry==='preview'?'river-love':'map-summary');
+}
+p.click('#preview [data-proof]');p.click('#detail-panel [data-panel="local-proofs"]');
+p.click('#detail-panel [data-proof="shared"]');
+assert.equal(p.q('#detail-panel [data-future]').dataset.future,'ability');
+p.click('#detail-panel [data-panel="local-proofs"]');p.click('#detail-panel [data-proof="unlinked"]');
+assert.equal(document.querySelector('#detail-panel [data-future]'),null);
+assert.match(p.q('#detail-panel').textContent,/未保留河流关联/);
+assert.equal(p.raw()[storageKey],seed[storageKey]);p.close();
+console.log('Scaffold DOM passed: shared-proof river context, future navigation, Escape focus, unlinked proof, unchanged storage; dynamic review, escaped edits, save, personal map, direction draft, existing-path reuse and unsaved-input retention.');
