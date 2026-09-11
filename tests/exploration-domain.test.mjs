@@ -3,25 +3,26 @@ import assert from 'node:assert/strict';
 import {createExplorationSession,answersFromUi,runSyntheticAnalysis,buildManualProposal,confirmAnalysis,createMapChangeSet,createPrototypeProfile,applyMapChangeSet,buildPrototypeArtifacts} from '../frontend/src/exploration-domain.js';
 import {reviewItems} from '../frontend/src/exploration-review.js';
 
-const ui={answers:{situation:'change',situationOther:'',blockers:['assets'],experience:'project',actions:['organize','coordinate'],actionOther:'',outcomes:['artifact'],source:''},cards:{experience:'confirmed',human:'confirmed',ability:'confirmed',unknown:'confirmed'},edits:{}};
+const ui={answers:{situation:'change',situationOther:'',blockers:['assets'],experience:'project',actions:['organize','coordinate'],actionOther:'',outcomes:['artifact'],source:'',methodUsed:'信息分类法',riverBasis:['ability']},cards:{experience:'confirmed',human:'confirmed',ability:'confirmed',unknown:'confirmed'},edits:{}};
 const session=()=>{const value=createExplorationSession({id:'synthetic'});value.answers=answersFromUi(ui);return value;};
-const initialUi=()=>({answers:{situation:'change',situationOther:'',blockers:['assets'],experience:'project',actions:['organize','coordinate'],actionOther:'',outcomes:['artifact'],source:''},cards:{experience:'confirmed',human:'confirmed',ability:'confirmed',unknown:'confirmed'},edits:{}});
+const initialUi=()=>structuredClone(ui);
 
-test('页面回答转换为带版本和跳过状态的会话输入',()=>{const value=session();assert.equal(value.flowVersion,'stage10-minimum-v0.1');assert.equal(value.answers.length,5);assert.equal(value.answers.find(x=>x.questionId==='q2').skipped,false);});
+test('页面回答转换为带版本和跳过状态的会话输入',()=>{const value=session();assert.equal(value.flowVersion,'stage10-minimum-v0.2');assert.equal(value.answers.length,7);assert.equal(value.answers.find(x=>x.questionId==='q2').skipped,false);assert.equal(value.answers.find(x=>x.questionId==='q6').skipped,false);});
 test('合成分析只产生待确认、有引用的三河五资本候选',()=>{const proposal=runSyntheticAnalysis(session());assert.deepEqual(proposal.capital_links.map(x=>x.capital),['human']);assert.deepEqual(proposal.river_links.map(x=>x.river),['ability']);assert.ok(proposal.evidence_drafts.every(x=>x.input_refs.length&&x.confirmation_status==='pending'));});
-test('自动提议保留规则版本、实际输入依据和证明依赖',()=>{const proposal=runSyntheticAnalysis(session());for(const item of [...proposal.claims,...proposal.evidence_drafts,...proposal.capital_links,...proposal.river_links,...proposal.future_direction_drafts]){assert.match(item.rule_id,/^R/);assert.equal(item.rule_version,'0.1');assert.ok(item.basis_refs.length);assert.ok(item.basis_refs.every(ref=>item.input_refs.includes(ref)));}assert.equal(proposal.future_direction_drafts[0].evidence_id,proposal.evidence_drafts[0].id);});
-test('本地候选规则不会把三种输入都固定到能力之河',()=>{
+test('自动提议保留规则版本、实际输入依据和证明依赖',()=>{const proposal=runSyntheticAnalysis(session());for(const item of [...proposal.claims,...proposal.evidence_drafts,...proposal.capital_links,...proposal.river_links]){assert.match(item.rule_id,/^R/);assert.equal(item.rule_version,'0.1');assert.ok(item.basis_refs.length);assert.ok(item.basis_refs.every(ref=>item.input_refs.includes(ref)));}assert.equal(proposal.river_links[0].evidence_id,proposal.evidence_drafts[0].id);assert.deepEqual(proposal.future_direction_drafts,[]);});
+test('河流关联只读取用户明确补充的关系，可多选或跳过',()=>{
  const proposalFor=answers=>{const value=createExplorationSession();value.answers=answersFromUi({...ui,answers:{...ui.answers,...answers}});return runSyntheticAnalysis(value);};
- assert.equal(proposalFor({experience:'interest'}).river_links[0].river,'love');
- assert.equal(proposalFor({experience:'work'}).river_links[0].river,'survival');
- assert.equal(proposalFor({experience:'project',situation:'change',blockers:['assets']}).river_links[0].river,'ability');
+ assert.deepEqual(proposalFor({experience:'interest'}).river_links.map(x=>x.river),['ability']);
+ assert.deepEqual(proposalFor({riverBasis:['survival','love']}).river_links.map(x=>x.river),['survival','love']);
+ assert.deepEqual(proposalFor({riverBasis:[]}).river_links,[]);
 });
-test('卡点不再决定河流，结果未知时不补推资本或方向',()=>{
- const value=createExplorationSession();value.answers=answersFromUi({...ui,answers:{...ui.answers,experience:'project',blockers:['interest'],outcomes:['unclear']}});
+test('缺少补充依据时不从结果或卡点补推资本、河流和方向',()=>{
+ const value=createExplorationSession();value.answers=answersFromUi({...ui,answers:{...ui.answers,blockers:['interest'],outcomes:['unclear'],methodUsed:'',riverBasis:[]}});
  const proposal=runSyntheticAnalysis(value);
  assert.deepEqual(proposal.capital_links,[]);assert.deepEqual(proposal.river_links,[]);assert.deepEqual(proposal.future_direction_drafts,[]);
- const work=createExplorationSession();work.answers=answersFromUi({...ui,answers:{...ui.answers,experience:'project',blockers:['reality'],outcomes:['artifact']}});
- assert.equal(runSyntheticAnalysis(work).river_links[0].river,'ability');
+ assert.equal(proposal.unknowns.find(x=>x.topic==='capital').reason,'skipped');assert.equal(proposal.unknowns.find(x=>x.topic==='river').reason,'skipped');assert.equal(proposal.unknowns.find(x=>x.topic==='direction').reason,'not_asked');
+ const work=createExplorationSession();work.answers=answersFromUi({...ui,answers:{...ui.answers,blockers:['reality'],outcomes:['artifact'],methodUsed:'',riverBasis:[]}});
+ assert.deepEqual(runSyntheticAnalysis(work).river_links,[]);
 });
 test('手工模式只保留用户输入，并把解释留为未知',()=>{const proposal=buildManualProposal(session());assert.equal(proposal.claims.length,0);assert.equal(proposal.capital_links.length,0);assert.equal(proposal.river_links.length,0);assert.equal(proposal.future_direction_drafts.length,0);assert.equal(proposal.evidence_drafts[0].experience,'project');assert.equal(proposal.unknowns.length,3);const confirmed=confirmAnalysis(proposal,Object.fromEntries(reviewItems(proposal).map(item=>[item.id,'confirmed'])));assert.equal(confirmed.evidence.length,1);assert.equal(confirmed.capitalLinks.length,0);assert.equal(confirmed.riverLinks.length,0);});
 test('不同探索生成不同证明 ID，不会覆盖已有证明',()=>{const firstUi=structuredClone(ui),secondUi=structuredClone(ui);secondUi.answers.experience='work';const first=buildPrototypeArtifacts({...structuredClone(initialUi()),cards:{experience:'confirmed',human:'confirmed',ability:'confirmed',unknown:'confirmed'},edits:{}}).changeSet;const second=buildPrototypeArtifacts({...initialUi(),answers:{...initialUi().answers,experience:'work'},cards:{experience:'confirmed',human:'confirmed',ability:'confirmed',unknown:'confirmed'},edits:{}}).changeSet;let profile=createPrototypeProfile();profile=applyMapChangeSet(profile,first).profile;profile=applyMapChangeSet(profile,second).profile;assert.equal(Object.keys(profile.evidence).length,2);assert.notEqual(first.operations.find(x=>x.type==='add_evidence').entityId,second.operations.find(x=>x.type==='add_evidence').entityId);});
@@ -39,7 +40,7 @@ test('再次保存删除本轮旧内容，保留其他探索，撤销删除可�
  assert.deepEqual(applyMapChangeSet(profile,removed,{fail:true}).profile,before);
  profile=applyMapChangeSet(profile,removed).profile;
  for(const key of ['evidence','capitalLinks','riverLinks'])assert.equal(Object.keys(profile[key]).length,1);
- assert.equal(Object.keys(profile.unknowns).length,2);
+ assert.equal(Object.keys(profile.unknowns).length,1);
  profile=applyMapChangeSet(profile,first).profile;
  assert.equal(Object.keys(profile.evidence).length,2);
  assert.equal(applyMapChangeSet(profile,first).duplicate,true);

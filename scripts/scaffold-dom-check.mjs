@@ -1,6 +1,7 @@
 // DOM behavior checks; supply a separately installed jsdom path. No visual assertions.
 import assert from 'node:assert/strict';
 import {pathToFileURL} from 'node:url';
+import {WORKSPACE_KEY} from '../frontend/src/workspace-model.js';
 const {JSDOM}=await import(pathToFileURL(process.argv[2]).href);
 let seq=0;
 async function page(module,url,raw={}){
@@ -13,16 +14,17 @@ async function page(module,url,raw={}){
  const q=s=>{const el=document.querySelector(s);assert.ok(el,`Missing ${s}`);return el;};
  return {q,click:s=>q(s).click(),fill(s,value){const el=q(s);el.value=value;el.dispatchEvent(new window.Event('input',{bubbles:true}));},raw:()=>Object.fromEntries(Object.keys(localStorage).map(k=>[k,localStorage.getItem(k)])),close(){assert.deepEqual(errors,[]);dom.window.close();}};
 }
-let p=await page('exploration','?view=explore');p.click('[data-next]');p.click('[data-single=situation][data-value=change]');p.click('[data-next]');p.click('[data-next]');p.click('[data-single=experience][data-value=project]');p.click('[data-next]');p.click('[data-toggle=actions][data-value=organize]');p.click('[data-next]');p.click('[data-toggle=outcomes][data-value=artifact]');p.click('[data-analyze]');
+let p=await page('exploration','?view=explore');p.click('[data-next]');p.click('[data-single=situation][data-value=change]');p.click('[data-next]');p.click('[data-next]');p.click('[data-single=experience][data-value=project]');p.click('[data-next]');p.click('[data-toggle=actions][data-value=organize]');p.click('[data-next]');p.click('[data-toggle=outcomes][data-value=artifact]');p.click('[data-next]');p.fill('[data-text=methodUsed]','信息分类法');p.click('[data-toggle=riverBasis][data-value=ability]');p.click('[data-analyze]');
 await new Promise(resolve=>setTimeout(resolve,750));
-assert.equal(document.querySelectorAll('[data-understanding-card]').length,7);
+assert.equal(document.querySelectorAll('[data-understanding-card]').length,5);
 for(const button of [...document.querySelectorAll('[data-card-value=confirmed]')])p.click(`[data-card="${button.dataset.card}"][data-card-value=confirmed]`);
 const evidenceCard=[...document.querySelectorAll('[data-understanding-card]')].find(n=>n.textContent.includes('经历草稿'));
 p.click(`[data-card="${evidenceCard.dataset.understandingCard}"][data-card-value=editing]`);p.fill('[data-edit-value]','<我的项目经历>');p.click('[data-save-edit]');
+for(const button of [...document.querySelectorAll('[data-card-value=confirmed]')])p.click(`[data-card="${button.dataset.card}"][data-card-value=confirmed]`);
 p.click('[data-next]');p.click('[data-next]');assert.match(p.q('.explore-card').textContent,/<我的项目经历>/);assert.equal(document.querySelector('.explore-card img'),null);p.click('[data-next]');p.click('[data-next]');p.click('[data-apply-update]');assert.match(p.q('h1').textContent,/已保存/);let raw=p.raw();p.close();
-p=await page('app','',raw);assert.match(p.q('.top-tools').textContent,/我的本地地图/);p.click('#river-ability');assert.match(p.q('#preview').textContent,/这些行动可能在其他情境复用/);p.click('#preview [data-future]');const bridge=p.q('#detail-panel a[href*="direction="]').getAttribute('href');raw=p.raw();p.close();
-p=await page('workspaces',bridge.replace(/^\//,''),raw);assert.match(p.q('#workspace-notice').textContent,/草稿/);assert.equal(p.q('[name=river]').value,'ability');p.click('button[type=submit]');p.click('[data-edit]');p.fill('[name=notes]','切换河流仍要保留');p.click('[data-river=love]');assert.equal(p.q('[name=notes]').value,'切换河流仍要保留');p.click('button[type=submit]');raw=p.raw();p.close();
-p=await page('workspaces',bridge.replace(/^\//,''),raw);assert.match(p.q('#workspace-notice').textContent,/已有保存的路径/);assert.equal(document.querySelector('#workspace-form'),null);assert.match(p.q('.workspace-paper').textContent,/切换河流仍要保留/);p.close();
+p=await page('app','',raw);assert.match(p.q('.top-tools').textContent,/我的本地地图/);p.click('#river-ability');assert.match(p.q('#preview').textContent,/另一种任务/);p.click('#preview [data-future]');const bridge=p.q('#detail-panel a[href*="view=paths"][href*="river=ability"]').getAttribute('href');raw=p.raw();p.close();
+p=await page('workspaces',bridge.replace(/^\//,''),raw);p.click('[data-new-path=ability]');p.fill('[name=name]','自主核对路径');assert.equal(p.q('[name=river]').value,'ability');p.click('button[type=submit]');p.click('[data-edit]');p.fill('[name=notes]','切换河流仍要保留');p.click('[data-river=love]');assert.equal(p.q('[name=notes]').value,'切换河流仍要保留');p.click('button[type=submit]');raw=p.raw();const savedPathId=JSON.parse(raw[WORKSPACE_KEY]).paths[0].id;p.close();
+p=await page('workspaces',`?view=paths&item=${savedPathId}`,raw);assert.equal(document.querySelector('#workspace-form'),null);assert.match(p.q('.workspace-paper').textContent,/切换河流仍要保留/);p.close();
 // A shared proof must keep its entry river through detail, future and Escape.
 const {createPrototypeProfile}=await import('../shared/profile.js');
 const {saveExplorationProfile,storageKey}=await import('../frontend/src/exploration-storage.js');
@@ -51,4 +53,4 @@ p.click('#detail-panel [data-panel="local-proofs"]');p.click('#detail-panel [dat
 assert.equal(document.querySelector('#detail-panel [data-future]'),null);
 assert.match(p.q('#detail-panel').textContent,/未保留河流关联/);
 assert.equal(p.raw()[storageKey],seed[storageKey]);p.close();
-console.log('Scaffold DOM passed: shared-proof river context, future navigation, Escape focus, unlinked proof, unchanged storage; dynamic review, escaped edits, save, personal map, direction draft, existing-path reuse and unsaved-input retention.');
+console.log('Scaffold DOM passed: explicit river basis, shared-proof context, future navigation, Escape focus, safe edits, save, personal map, manual path creation and unsaved-input retention.');

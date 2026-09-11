@@ -4,7 +4,7 @@ const rivers={survival:'生存之河',ability:'能力之河',love:'热爱之河'
 const capitals={human:'人力资本',social:'社会资本',psychological:'心理资本',financial:'财务资本',physical:'身体资本'};
 const topics={financial:'财务条件',physical:'身体条件',evidence:'证明',river:'河流关联',capital:'资本关联',direction:'未来方向',conflict:'相互矛盾的回答'};
 const reasons={skipped:'你选择了跳过，继续保持未知。',not_asked:'本轮尚未询问必要信息。',insufficient_evidence:'已有信息还不足以下结论。',conflicting_inputs:'回答中存在冲突，需要进一步澄清。'};
-const inputs={q1:'当前选择',q2:'影响决定的因素',q3:'经历',q4:'具体行动',q5:'成果与来源'};
+const inputs={q1:'当前选择',q2:'影响决定的因素',q3:'经历',q4:'具体行动',q5:'成果与来源',q6:'使用的方法',q7:'明确选择的河流关系'};
 const ruleNames={R01:'经历整理',R03:'人力关联',R07:'生存归属',R08:'能力归属',R09:'热爱归属',R10:'方向行动'};
 export const displayValue=value=>({course:'课程 / 研究',work:'工作任务',project:'项目 / 作品',collaboration:'协作经历',interest:'长期兴趣实践',organize:'整理信息或需求',create:'制作具体成果',coordinate:'协调分工',solve:'解决具体问题',research:'研究与分析',practice:'持续练习',artifact:'完成可查看成果',problem:'解决一个具体问题',feedback:'得到他人反馈',continued:'持续做了一段时间',unclear:'暂时没有明确结果',none:'暂时没有来源',other:'其他记录'}[value]??value);
 export function reviewItems(proposal){

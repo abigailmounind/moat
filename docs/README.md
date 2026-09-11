@@ -68,6 +68,7 @@
 
 | 记录 | 对应范围 |
 |---|---|
+| [补充核对验证](reports/optional-evidence-check.md) | 具体方法、三河明确关系、全部跳过、旧会话兼容及浏览器回归 |
 | [手工入口验证](reports/manual-exploration-entry.md) | 主动手工入口修复、确认和保存失败 DOM 回归、桌面与窄屏浏览器闭环 |
 | [本地规则审查](reports/rules-audit.md) | 卡点推河、固定资本、无成果和删除依据后方向残留的源码与合成复现 |
 | [会话退出基础](reports/session-revocation.md) | 当前令牌撤销、数据保留、失败处理与 PostgreSQL/HTTP 重启回归 |

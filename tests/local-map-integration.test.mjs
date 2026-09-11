@@ -45,7 +45,7 @@ test('地图逐条解析实际资本与河流关联，删除一条仍可打开�
  const first=Object.keys(profile.evidence)[0];
  assert.equal(localProofFromProfile(profile,first).river,null);
  assert.equal(localProofFromProfile(profile,first).capital,'未保留资本关联');
- ui.cards.human='confirmed';ui.cards.ability='confirmed';ui.edits.experience='<img src=x>';
+ ui.answers.methodUsed='原型制作';ui.answers.riverBasis=['ability'];ui.cards.human='confirmed';ui.cards.ability='confirmed';ui.edits.experience='<img src=x>';
  profile=applyMapChangeSet(profile,buildPrototypeArtifacts(ui).changeSet).profile;
  const second=Object.keys(profile.evidence).find(id=>id!==first);
  assert.equal(localProofFromProfile(profile,second).river,'ability');

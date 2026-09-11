@@ -13,7 +13,7 @@ import {emptyWorkspace,newPath,newPlan} from '../frontend/src/workspace-model.js
 import {commitExplorationChange,saveExplorationProfile,loadExplorationProfile,storageKey} from '../frontend/src/exploration-storage.js';
 import {sidebarMarkup} from '../frontend/src/sidebar.js';
 
-const session={id:'boundary',flowVersion:'stage10-minimum-v0.1',answers:[{questionId:'q3',kind:'experience',value:'project',skipped:false},{questionId:'q4',kind:'actions',value:['organize'],skipped:false},{questionId:'q5',kind:'outcome',value:{outcomes:['artifact'],source:null},skipped:false}]};
+const session={id:'boundary',flowVersion:'stage10-minimum-v0.2',answers:[{questionId:'q3',kind:'experience',value:'project',skipped:false},{questionId:'q4',kind:'actions',value:['organize'],skipped:false},{questionId:'q5',kind:'outcome',value:{outcomes:['artifact'],source:null},skipped:false},{questionId:'q6',kind:'method',value:'信息分类法',skipped:false},{questionId:'q7',kind:'river_basis',value:['ability'],skipped:false}]};
 const proposal=()=>runSyntheticAnalysis(session);
 const memory=()=>{let raw=null;return {getItem:()=>raw,setItem:(_,value)=>{raw=value;}};};
 const confirm=p=>confirmAnalysis(p,Object.fromEntries(reviewItems(p).map(i=>[i.id,'confirmed'])));
@@ -29,7 +29,7 @@ test('shared sidebar keeps map navigation structure and current-page state',()=>
 });
 
 test('dynamic confirmation isolates multiple evidence, associations, unknowns and edits',()=>{
- const p=proposal(),second={...p.evidence_drafts[0],id:'second',title:'第二段经历'};p.evidence_drafts.push(second);
+ const p=proposal(),second={...p.evidence_drafts[0],id:'second',title:'第二段经历'};p.evidence_drafts.push(second);p.unknowns.push({...p.unknowns[0],id:'second_unknown',topic:'river'});
  p.capital_links.push({...p.capital_links[0],id:'second_capital',capital:'social',evidence_id:'second'});
  const cards=Object.fromEntries(reviewItems(p).map(i=>[i.id,'confirmed']));cards[p.evidence_drafts[0].id]='deleted';cards.second='modified';
  const c=confirmAnalysis(p,cards,{second:'<修正后的第二段>',[p.unknowns[0].id]:'仅这一项有修改'});
@@ -57,7 +57,7 @@ test('workspace map nodes use separate coordinates for all three rivers',()=>{
  assert.notDeepEqual(points.survival,points.ability);assert.notDeepEqual(points.love,points.ability);assert.notDeepEqual(points.love,points.survival);
 });
 test('direction opens a draft once and never overwrites an edited saved path',()=>{
- const direction=confirm(proposal()).directions[0],data=emptyWorkspace();assert.equal(prepareDirectionPath(data,{...direction,confirmation_status:'pending'}),null);
+ const direction={id:'direction',river:'ability',name:'换个小情境验证',support:'已有一次实践',unknown:'跨情境表现待验证',next_action:'完成一次小实践',confirmation_status:'confirmed'},data=emptyWorkspace();assert.equal(prepareDirectionPath(data,{...direction,confirmation_status:'pending'}),null);
  const first=prepareDirectionPath(data,direction);assert.equal(first.existing,false);assert.equal(data.paths.length,0);
  data.paths.push({...first.path,notes:'我的修改'});const again=prepareDirectionPath(data,{...direction,name:'新分析'});assert.equal(again.existing,true);assert.equal(again.path.notes,'我的修改');assert.equal(again.path.name,first.path.name);
 });

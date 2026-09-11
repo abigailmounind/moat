@@ -22,11 +22,22 @@ try{
   const next=()=>click('[data-next]');
   const layout=async()=>assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'horizontal overflow');
   const workspace=()=>page.evaluate(key=>JSON.parse(localStorage.getItem(key)),WORKSPACE_KEY);
+  const answerToOutcome=async()=>{
+   await page.goto(`${baseUrl}/?view=explore`);
+   await next();await click('[data-value="change"]');await next();await next();
+   await click('[data-value="project"]');await next();await click('[data-value="organize"]');await next();
+   await click('[data-value="unclear"]');
+  };
 
-  await page.goto(`${baseUrl}/?view=explore`);
-  await next();await click('[data-value="change"]');await next();await next();
-  await click('[data-value="project"]');await next();await click('[data-value="organize"]');await next();
-  await click('[data-value="unclear"]');await page.locator('[data-manual-analysis]').focus();await page.keyboard.press('Enter');
+  await answerToOutcome();await next();
+  if(width===1440){await page.locator('[data-text="methodUsed"]').fill('信息分类法');await click('[data-toggle="riverBasis"][data-value="ability"]');}
+  await page.locator('[data-analyze]').focus();await page.keyboard.press('Enter');
+  await page.getByText('理解确认 · 本地规则整理',{exact:true}).waitFor();await layout();
+  assert.equal((await page.getByText('资本关联 · 人力资本',{exact:true}).count())>0,width===1440);
+  assert.equal((await page.getByText('河流关联 · 能力之河',{exact:true}).count())>0,width===1440);
+  assert.equal(await page.evaluate(()=>localStorage.length),0);
+
+  await answerToOutcome();await page.locator('[data-manual-analysis]').focus();await page.keyboard.press('Enter');
   await page.getByText('理解确认 · 手工整理',{exact:true}).waitFor();await layout();
   assert.equal(await page.locator('[data-next]').isDisabled(),true);
   const cardIds=await page.locator('[data-card-value="confirmed"]').evaluateAll(nodes=>nodes.map(node=>node.dataset.card));
@@ -57,7 +68,7 @@ try{
   await page.locator('#detail-panel').getByText('合成验收成果',{exact:false}).first().waitFor();
 
   assert.deepEqual(errors,[]);assert.deepEqual(apiRequests,[]);
-  console.log(`Browser flow passed at ${width}px: manual exploration, local save, path, plan, milestone, growth, proof, reload and map.`);
+  console.log(`Browser flow passed at ${width}px: optional evidence check, manual exploration, local save, path, plan, milestone, growth, proof, reload and map.`);
   await context.close();
  }
 }finally{await browser.close();}

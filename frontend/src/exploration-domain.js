@@ -12,18 +12,13 @@ const safeId=value=>String(value??'session').toLowerCase().replace(/[^a-z0-9_-]+
 const clean=value=>String(value??'').trim();
 const canonical=value=>Array.isArray(value)?`[${value.map(canonical).join(',')}]`:value&&typeof value==='object'?`{${Object.keys(value).sort().map(key=>`${JSON.stringify(key)}:${canonical(value[key])}`).join(',')}}`:JSON.stringify(value);
 function fingerprint(value){let hash=2166136261;for(const char of canonical(value)){hash^=char.charCodeAt(0);hash=Math.imul(hash,16777619);}return (hash>>>0).toString(36);}
-const riverProposal=byId=>{
- const experience=byId.q3?.value,blockers=byId.q2?.value??[],situation=byId.q1?.value;
- const river=experience==='interest'?'love':experience==='work'?'survival':'ability';
- return {
-  river,
-  explanation:{love:'这段经历包含长期兴趣或主动投入的线索，可以先作为热爱之河的候选关联。',survival:'这段经历发生在工作或现实支撑情境中，可以先作为生存之河的候选关联。',ability:'这些行动可能在其他情境复用，可以先作为能力之河的候选关联。'}[river],
-  uncertainty:{love:'是否愿意长期持续投入，仍需更多实践验证。',survival:'能否形成稳定而可持续的现实支撑，仍需继续验证。',ability:'能否跨情境复用，仍需继续验证。'}[river],
-  direction:{love:['继续一次愿意主动投入的小实践','已有兴趣与行动线索，可以用一次小实践观察持续投入感。','投入感能否持续，以及现实条件是否允许，还需要实际尝试。'],survival:['验证这段做法能否形成现实支撑','已有工作或现实情境中的行动线索，可以继续观察它的稳定性。','能否稳定交付并形成可持续支撑，还需要实际结果。'],ability:['换个小情境，验证这段做法','你提供了具体行动与结果，可以从中挑选一个做法继续验证。','换到另一种任务后是否仍然有用，还需要实际尝试。']}[river]
- };
+const riverBasis={
+ survival:{explanation:'你明确说明这段经历正在承担现实支撑，或正在验证交换价值。',uncertainty:'稳定性与可持续程度仍需继续观察。',rule:'R07'},
+ ability:{explanation:'你明确说明这段经历里的做法已在另一种任务中复用。',uncertainty:'当前只记录这次复用，不扩展为普遍可迁移。',rule:'R08'},
+ love:{explanation:'你明确说明没有现实压力时，仍愿意继续投入这项具体活动。',uncertainty:'投入意愿可以继续通过实际行动核对。',rule:'R09'}
 };
 
-export function createExplorationSession({id=generatedSessionId(),flowVersion='stage10-minimum-v0.1'}={}){
+export function createExplorationSession({id=generatedSessionId(),flowVersion='stage10-minimum-v0.2'}={}){
  return {id,flowVersion,status:'draft',answers:[],excludedProposalIds:[],createdAt:'prototype-time'};
 }
 
@@ -34,24 +29,25 @@ export function answersFromUi(uiState){
   {questionId:'q2',kind:'blockers',value:[...a.blockers],skipped:a.blockers.length===0},
   {questionId:'q3',kind:'experience',value:a.experience,skipped:false},
   {questionId:'q4',kind:'actions',value:[...a.actions,clean(a.actionOther)].filter(Boolean),skipped:false},
-  {questionId:'q5',kind:'outcome',value:{outcomes:[...a.outcomes],source:a.source||null},skipped:false}
+  {questionId:'q5',kind:'outcome',value:{outcomes:[...a.outcomes],source:a.source||null},skipped:false},
+  {questionId:'q6',kind:'method',value:clean(a.methodUsed),skipped:!clean(a.methodUsed)},
+  {questionId:'q7',kind:'river_basis',value:[...(a.riverBasis??[])],skipped:!(a.riverBasis??[]).length}
  ];
 }
 
 export function runSyntheticAnalysis(session){
  const byId=Object.fromEntries(session.answers.map(answer=>[answer.questionId,answer]));
- const actions=byId.q4?.value??[],outcomes=byId.q5?.value?.outcomes??[],hasReportedOutcome=outcomes.some(value=>value!=='unclear');
+ const actions=byId.q4?.value??[],outcomes=byId.q5?.value?.outcomes??[],method=clean(byId.q6?.value),riverSelections=(byId.q7?.value??[]).filter(river=>rivers.has(river));
  if(!byId.q3?.value||!actions.length||!outcomes.length)throw new Error('analysis_input_incomplete');
- const prefix=safeId(session.id),evidenceId=prefix+'_evidence_experience',capitalId=prefix+'_capital_human',candidate=riverProposal(byId),riverId=prefix+'_river_'+candidate.river;
- const unknownRivers=['survival','ability','love'].filter(river=>river!==candidate.river),[directionName,directionSupport,directionUnknown]=candidate.direction,candidateRefs=['q1','q2','q3','q4','q5'].filter(id=>byId[id]);
+ const prefix=safeId(session.id),evidenceId=prefix+'_evidence_experience',capitalId=prefix+'_capital_human';
  return {
   contract_version:'0.1',session_id:session.id,
   claims:[{id:prefix+'_claim_experience',kind:'experience',text:'用户描述了一段包含具体行动的实践。',source_type:'ai_proposal',confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:'R01',rule_version:'0.1',basis_refs:['q3','q4','q5']}],
-  evidence_drafts:[{id:evidenceId,title:'一段具体实践',experience:byId.q3.value,actions,result:outcomes.join('、'),source:byId.q5.value.source,limitations:['熟练程度与跨情境表现仍待验证'],source_type:'user_self_report',confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:'R01',rule_version:'0.1',basis_refs:['q3','q4','q5']}],
-  capital_links:hasReportedOutcome?[{id:capitalId,evidence_id:evidenceId,capital:'human',aspect:'具体行动与已报告结果',explanation:'用户描述了实践中的具体行动，并报告了一个结果线索。',confirmation_status:'pending',input_refs:['q4','q5'],rule_id:'R03',rule_version:'0.1',basis_refs:['q4','q5']}]:[],
-  river_links:hasReportedOutcome?[{id:riverId,evidence_id:evidenceId,river:candidate.river,explanation:candidate.explanation,uncertainty:candidate.uncertainty,confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:candidate.river==='love'?'R09':candidate.river==='survival'?'R07':'R08',rule_version:'0.1',basis_refs:['q3','q4','q5']}]:[],
-  future_direction_drafts:hasReportedOutcome?[{id:prefix+'_direction_'+candidate.river,evidence_id:evidenceId,river:candidate.river,name:directionName,support:directionSupport,unknown:directionUnknown,next_action:'选一个规模小的行动，记下过程、结果和自己的感受。',confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:'R10',rule_version:'0.1',basis_refs:['q3','q4','q5']}]:[],
-  unknowns:unknownRivers.map(river=>({id:prefix+'_unknown_'+river,topic:'river',reason:'insufficient_evidence',input_refs:candidateRefs}))
+  evidence_drafts:[{id:evidenceId,title:'一段具体实践',experience:byId.q3.value,actions,result:outcomes.join('、'),source:byId.q5.value.source,limitations:[method?'这次使用的方法已记录；熟练程度仍需更多实践说明。':'尚未补充具体方法；本轮只记录行动与结果。'],source_type:'user_self_report',confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:'R01',rule_version:'0.1',basis_refs:['q3','q4','q5']}],
+  capital_links:method?[{id:capitalId,evidence_id:evidenceId,capital:'human',aspect:'具体方法的一次实践',explanation:`你明确补充了这次使用的方法：${method}。`,confirmation_status:'pending',input_refs:['q4','q6'],rule_id:'R03',rule_version:'0.1',basis_refs:['q4','q6']}]:[],
+  river_links:riverSelections.map(river=>({id:prefix+'_river_'+river,evidence_id:evidenceId,river,explanation:riverBasis[river].explanation,uncertainty:riverBasis[river].uncertainty,confirmation_status:'pending',input_refs:['q3','q7'],rule_id:riverBasis[river].rule,rule_version:'0.1',basis_refs:['q3','q7']})),
+  future_direction_drafts:[],
+  unknowns:[...(!method?[{id:prefix+'_unknown_capital',topic:'capital',reason:byId.q6?'skipped':'not_asked',input_refs:byId.q6?['q6']:[]}]:[]),...(!riverSelections.length?[{id:prefix+'_unknown_river',topic:'river',reason:byId.q7?'skipped':'not_asked',input_refs:byId.q7?['q7']:[]}]:[]),{id:prefix+'_unknown_direction',topic:'direction',reason:'not_asked',input_refs:[]}]
  };
 }
 
