@@ -70,6 +70,8 @@
 | [本地规则审查](reports/rules-audit.md) | 卡点推河、固定资本、无成果和删除依据后方向残留的源码与合成复现 |
 | [会话退出基础](reports/session-revocation.md) | 当前令牌撤销、数据保留、失败处理与 PostgreSQL/HTTP 重启回归 |
 | [PostgreSQL 生命周期验证](reports/postgres-lifecycle.md) | 真实 SQL 回滚、写入/删除竞争、成长证明与导出删除跨 Node 重启验证 |
+| [证明上下文验证](reports/map-proof-context.md) | 跨河证明入口、未来方向、Escape 焦点与本地数据不变的 DOM 回归 |
+| [Pages 成长页发布](reports/pages-growth-release.md) | 成长页重复导入修复、生产部署、静态打包与线上模块检查 |
 | [跨保存位置保护](reports/workspace-source-guard.md) | 删除连接或切换位置后拒绝旧快照跨来源提交 |
 | [数据管理页面验证](reports/data-management-ui.md) | 导出与二次确认删除、待核对标记、独立缓存清理 |
 | [服务端数据生命周期](reports/server-data-lifecycle.md) | 当前匿名主体导出/删除，内存与 HTTP 验证，数据库专项待执行 |

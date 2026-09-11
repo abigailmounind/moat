@@ -28,6 +28,7 @@ export function confirmReview(proposal,cards,edits={}){
  const kept=new Set(result.evidence.map(x=>x.id));
  result.capitalLinks=result.capitalLinks.filter(x=>kept.has(x.evidence_id));
  result.riverLinks=result.riverLinks.filter(x=>kept.has(x.evidence_id));
+ result.directions=result.directions.filter(x=>!x.evidence_id||kept.has(x.evidence_id));
  return result;
 }
 export function confirmedContent(step,c){

@@ -14,6 +14,13 @@ test('本地候选规则不会把三种输入都固定到能力之河',()=>{
  assert.equal(proposalFor({experience:'work'}).river_links[0].river,'survival');
  assert.equal(proposalFor({experience:'project',situation:'change',blockers:['assets']}).river_links[0].river,'ability');
 });
+test('卡点不再决定河流，结果未知时不补推资本或方向',()=>{
+ const value=createExplorationSession();value.answers=answersFromUi({...ui,answers:{...ui.answers,experience:'project',blockers:['interest'],outcomes:['unclear']}});
+ const proposal=runSyntheticAnalysis(value);
+ assert.deepEqual(proposal.capital_links,[]);assert.deepEqual(proposal.river_links,[]);assert.deepEqual(proposal.future_direction_drafts,[]);
+ const work=createExplorationSession();work.answers=answersFromUi({...ui,answers:{...ui.answers,experience:'project',blockers:['reality'],outcomes:['artifact']}});
+ assert.equal(runSyntheticAnalysis(work).river_links[0].river,'ability');
+});
 test('不同探索生成不同证明 ID，不会覆盖已有证明',()=>{const firstUi=structuredClone(ui),secondUi=structuredClone(ui);secondUi.answers.experience='work';const first=buildPrototypeArtifacts({...structuredClone(initialUi()),cards:{experience:'confirmed',human:'confirmed',ability:'confirmed',unknown:'confirmed'},edits:{}}).changeSet;const second=buildPrototypeArtifacts({...initialUi(),answers:{...initialUi().answers,experience:'work'},cards:{experience:'confirmed',human:'confirmed',ability:'confirmed',unknown:'confirmed'},edits:{}}).changeSet;let profile=createPrototypeProfile();profile=applyMapChangeSet(profile,first).profile;profile=applyMapChangeSet(profile,second).profile;assert.equal(Object.keys(profile.evidence).length,2);assert.notEqual(first.operations.find(x=>x.type==='add_evidence').entityId,second.operations.find(x=>x.type==='add_evidence').entityId);});
 test('删除证明会连带阻止无主资本和河流关系进入变更集',()=>{const proposal=runSyntheticAnalysis(session());const confirmed=confirmAnalysis(proposal,{...ui.cards,experience:'deleted'},{});const changeSet=createMapChangeSet(confirmed);assert.equal(changeSet.operations.some(x=>['add_evidence','link_capital','link_river'].includes(x.type)),false);assert.deepEqual(confirmed.excludedProposalIds,['experience']);});
 test('修改确认文本会进入结果对象，删除关联不会留下旧判断',()=>{const proposal=runSyntheticAnalysis(session());const edited=confirmAnalysis(proposal,ui.cards,{experience:'改写后的经历说明',human:'改写后的人力解释',ability:'改写后的能力解释'});assert.equal(edited.evidence[0].title,'改写后的经历说明');assert.equal(edited.capitalLinks[0].explanation,'改写后的人力解释');assert.equal(edited.riverLinks[0].explanation,'改写后的能力解释');const removed=confirmAnalysis(proposal,{...ui.cards,ability:'deleted'},{});assert.equal(removed.riverLinks.length,0);});

@@ -35,7 +35,7 @@ test('dynamic confirmation isolates multiple evidence, associations, unknowns an
  const c=confirmAnalysis(p,cards,{second:'<修正后的第二段>',[p.unknowns[0].id]:'仅这一项有修改'});
  assert.equal(c.evidence.length,1);assert.equal(c.evidence[0].title,'<修正后的第二段>');assert.equal(c.capitalLinks[0].capital,'social');assert.equal(c.riverLinks.length,0);
  assert.notEqual(c.unknowns[0].explanation,c.unknowns[1].explanation);assert.match(confirmedContent('evidence',c),/&lt;修正后的第二段&gt;/);
- const profile=applyMapChangeSet(createPrototypeProfile(),createMapChangeSet(c)).profile;assert.ok(validatePrototypeProfile(profile));assert.equal(Object.keys(profile.directions).length,1);
+ const profile=applyMapChangeSet(createPrototypeProfile(),createMapChangeSet(c)).profile;assert.ok(validatePrototypeProfile(profile));assert.equal(Object.keys(profile.directions).length,0);
 });
 test('personal map has no synthetic facts, supports empty data and separates all three rivers',()=>{
  const empty=personalMap(createPrototypeProfile());assert.equal(empty.rivers.length,3);assert.equal(empty.proofs.length,0);assert.equal(empty.directions.length,0);
