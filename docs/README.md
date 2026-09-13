@@ -69,6 +69,7 @@
 | 记录 | 对应范围 |
 |---|---|
 | [封面与访客地图预发布](reports/staging-cover-visitor-map.md) | 根封面、个人地图显式路由、访客隐私边界、隔离迁移与部署；浏览器下载限制 |
+| [正式生产接入](reports/production-release-2026-09-13.md) | 正式 themoat Pages、Worker、D1 接入与规则模式上线边界 |
 | [AI 与计划入口修复](reports/staging-ai-plan-entry.md) | 空工作区计划入口、workerd 原生 fetch 回归、AI 配置与真实通道排查 |
 | [隔离预发布验证](reports/cloudflare-staging-release.md) | Free 用户确认、远程 Pages/D1 部署、浏览器档案生命周期、合成数据清理与生产隔离 |
 | [Cloudflare D1 本地写入验证](reports/cloudflare-d1-local.md) | Wrangler 本地迁移、档案写入、幂等重放、并发 revision 与 `.env` 隔离 |
