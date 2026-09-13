@@ -12,7 +12,7 @@
 > 当前为公开匿名版本。用户无需注册即可使用：每个浏览器配置文件自动获得独立匿名主体，云端数据不会与其他主体混读。生产 AI 已按 Free-only 配置受控开放，用户需在本轮明确同意，失败时回退规则/手工模式。账号、跨设备同步和备份不是当前版本目标。
 
 
-工程采用原生 JavaScript ES Modules、DOM、SVG 与 CSS，配有 Node 参考服务、PostgreSQL 持久化实现，以及已部署到隔离预发布的 Cloudflare Pages、Worker 与 D1。浏览器默认保存个人数据，也可显式连接匿名服务器主体；两种位置不自动合并。当前没有账号或跨设备恢复。探索默认使用本地规则，仅在隔离环境能力确认 Free-only 且用户本轮明确同意时调用百炼新加坡模型。
+工程采用原生 JavaScript ES Modules、DOM、SVG 与 CSS，配有 Node 参考服务、PostgreSQL 持久化实现，以及正式与隔离两套 Cloudflare Pages、Worker 与 D1。浏览器默认保存个人数据，也可在“数据与同步”中显式连接匿名服务器主体；两种位置不自动合并。当前没有账号或跨设备恢复。探索默认使用本地规则，仅在生产或隔离环境能力确认 Free-only 且用户本轮明确同意时调用百炼新加坡模型。
 
 开始协作先读 [AGENTS](AGENTS.md)、[PRD](PRD.md) 和 [milestones](milestones.md)。工程职责与开发规则见 [工程结构与开发规范](docs/ENGINEERING_STRUCTURE.md)，按任务阅读见 [文档导航](docs/README.md)。
 
