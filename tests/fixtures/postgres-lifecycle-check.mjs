@@ -16,6 +16,23 @@ export async function checkPostgresLifecycle(pool,otherPool){
   return {release:client.release.bind(client),query:async(sql,args)=>hook(client,sql,args)};
  }});
 
+ const profileSession=await repository.createAnonymousSession();
+ const profileChange={id:'change_pg_profile',sessionId:'pg-profile',scope:{unknowns:['pg_unknown_direction']},operations:[{type:'keep_unknown',entityId:'pg_unknown_direction',payload:{id:'pg_unknown_direction',topic:'direction',reason:'not_asked',input_refs:[],explanation:'继续保持未知。',confirmation_status:'confirmed'}}]};
+ const profileBefore=await repository.readProfile(profileSession.subject.id);
+ const profileSaved=await repository.applyProfileChangeSet(profileSession.subject.id,profileBefore.revision,profileChange,{idempotencyKey:'pg-profile-save'});
+ assert.equal(profileSaved.ok,true);assert.equal(profileSaved.revision,1);
+ assert.equal((await repository.applyProfileChangeSet(profileSession.subject.id,0,profileChange,{idempotencyKey:'pg-profile-save'})).replayed,true);
+ assert.equal((await repository.applyProfileChangeSet(profileSession.subject.id,0,profileChange,{idempotencyKey:'pg-profile-stale'})).code,'revision_conflict');
+ const profileFaulty=createPostgresProductRepository({pool:wrap(async(client,sql,args)=>{
+  if(sql.startsWith('INSERT INTO moat_profile_receipts'))return client.query('SELECT 1/0');
+  return client.query(sql,args);
+ })});
+ const profileCurrent=await repository.readProfile(profileSession.subject.id),profileRetry={...profileChange,id:'change_pg_profile_retry'};
+ await assert.rejects(profileFaulty.applyProfileChangeSet(profileSession.subject.id,profileCurrent.revision,profileRetry,{idempotencyKey:'pg-profile-rollback'}));
+ assert.deepEqual(await repository.readProfile(profileSession.subject.id),profileCurrent);
+ assert.equal((await repository.applyProfileChangeSet(profileSession.subject.id,profileCurrent.revision,profileRetry,{idempotencyKey:'pg-profile-rollback'})).ok,true);
+ console.log('PostgreSQL: profile revision, idempotent confirmation and receipt rollback passed.');
+
  // Fail at the receipt insert, after all data rows and revision have changed.
  const operations=[
   {kind:'workspace',action:'import',workspace:{...seed,growth:[]},confirmed:true},

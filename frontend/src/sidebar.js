@@ -11,7 +11,7 @@ const symbols={
 
 const icon=name=>'<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+(symbols[name]||symbols.info)+'"/></svg>';
 const items=[
- ['home','/','home','我的河'],
+ ['home','/?view=river','home','我的河'],
  ['explore','/?view=explore','compass','探索'],
  ['paths','/?view=paths','fork','未来路径'],
  ['plans','/?view=plans','plan','护城河计划'],
@@ -21,7 +21,7 @@ const items=[
 export function sidebarMarkup(active){
  const navigation=items.map(([id,href,glyph,label])=>{
   const current=id===active;
-  return '<a class="nav-item '+(current?'active':'')+'" href="'+href+'" '+(current?'aria-current="page"':'')+'>'+icon(glyph)+'<span>'+label+'</span>'+(id==='explore'?'<small>原型</small>':'')+'</a>';
+  return '<a class="nav-item '+(current?'active':'')+'" href="'+href+'" '+(current?'aria-current="page"':'')+'>'+icon(glyph)+'<span>'+label+'</span></a>';
  }).join('');
- return '<aside class="sidebar explore-sidebar"><a class="brand" href="/">'+icon('leaf')+'<span>人生护城河</span></a><nav aria-label="主导航">'+navigation+'</nav><div class="sidebar-bottom"><span class="landscape-avatar" aria-hidden="true"></span><p>让人生<br>有更多可能的河流</p><a class="subtle-button" href="/?panel=settings">'+icon('settings')+' 显示设置</a><a class="subtle-button" href="/?view=sync" '+(active==='sync'?'aria-current="page"':'')+'>数据与同步 →</a></div></aside>';
+ return '<aside class="sidebar explore-sidebar"><a class="brand" href="/">'+icon('leaf')+'<span>人生护城河</span></a><nav aria-label="主导航">'+navigation+'</nav><div class="sidebar-bottom"><span class="landscape-avatar" aria-hidden="true"></span><p>让人生<br>有更多可能的河流</p><a class="subtle-button" href="/?view=river&panel=settings">'+icon('settings')+' 显示设置</a><a class="subtle-button" href="/?view=sync" '+(active==='sync'?'aria-current="page"':'')+'>数据与同步 →</a></div></aside>';
 }

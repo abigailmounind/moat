@@ -25,7 +25,7 @@ test('malformed plan references reject a workspace without throwing',()=>{
 });
 
 test('shared validators and the product repository do not import browser modules',async()=>{
- for(const filename of ['shared/profile.js','shared/workspace.js','shared/workspace-operations.js','backend/product-service.mjs','backend/product-repository.mjs','backend/postgres-repository.mjs']){
+ for(const filename of ['shared/profile.js','shared/profile-changes.js','shared/rules-analysis.js','shared/workspace.js','shared/workspace-operations.js','backend/product-service.mjs','backend/product-repository.mjs','backend/postgres-repository.mjs']){
   const source=await readFile(new URL('../'+filename,import.meta.url),'utf8');
   assert.doesNotMatch(source,/from\s+['"][^'"]*frontend\//);
   assert.doesNotMatch(source,/\b(?:window|document|localStorage)\b/);

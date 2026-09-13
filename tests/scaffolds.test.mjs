@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {Readable} from 'node:stream';
 import {EventEmitter} from 'node:events';
 import {createAnalysisService} from '../backend/analysis-service.mjs';
-import {createRemoteAnalysisAdapter} from '../frontend/src/analysis-client.js';
+import {createProductAnalysisAdapter,createRemoteAnalysisAdapter} from '../frontend/src/analysis-client.js';
 import {validateUnderstandingProposal,createSyntheticAnalysisAdapter} from '../frontend/src/exploration-analysis.js';
 import {runSyntheticAnalysis,createPrototypeProfile,confirmAnalysis,applyMapChangeSet,createMapChangeSet,validatePrototypeProfile} from '../frontend/src/exploration-domain.js';
 import {reviewItems,confirmedContent} from '../frontend/src/exploration-review.js';
@@ -24,7 +24,9 @@ test('shared sidebar keeps map navigation structure and current-page state',()=>
   assert.equal((html.match(/class="nav-item/g)??[]).length,5);
   assert.equal((html.match(/<svg class="icon"/g)??[]).length,7);
   assert.match(html,new RegExp('nav-item active[^>]+aria-current="page"'));
-  assert.ok(html.includes('landscape-avatar')&&html.includes('/?panel=settings'));
+  assert.ok(html.includes('landscape-avatar')&&html.includes('/?view=river&amp;panel=settings')||html.includes('/?view=river&panel=settings'));
+  assert.match(html,/class="brand" href="\/"/);assert.doesNotMatch(html,/brand active|brand[^>]+aria-current/);
+  assert.match(html,/href="\/\?view=river"/);assert.doesNotMatch(html,/原型|演示地图|我的本地地图/);
  }
 });
 
@@ -90,4 +92,13 @@ test('analysis server is disabled by default and protects origin, input, failure
 test('remote client checks session identity and always keeps the caller session unchanged',async()=>{
  const before=structuredClone(session);await assert.rejects(createRemoteAnalysisAdapter({fetchImpl:async()=>({ok:true,json:async()=>({...proposal(),session_id:'wrong'})})}).analyze(session),/invalid_analysis_contract/);
  assert.deepEqual(session,before);
+});
+test('V1 analysis client requires free-only capability and preserves explicit fallback mode',async()=>{
+ const calls=[],fetchImpl=async(url,options={})=>{calls.push({url,options});if(url==='/api/v1/capabilities')return {ok:true,json:async()=>({analysis:{model:'configured',freeOnly:true,routing:'server_managed'}})};if(url==='/api/v1/session')return {ok:true,json:async()=>({session:{subject:{id:'subject'}}})};return {ok:true,json:async()=>({analysis:{mode:'rules',fallbackReason:'model_unavailable',proposal:proposal()}})};};
+ const adapter=createProductAnalysisAdapter({fetchImpl});assert.equal(await adapter.available(),true);
+ const before=structuredClone(session),result=await adapter.analyze(session);
+ assert.equal(result.mode,'rules');assert.equal(result.fallbackReason,'model_unavailable');assert.deepEqual(session,before);
+ assert.deepEqual(calls.map(call=>call.url),['/api/v1/capabilities','/api/v1/session','/api/v1/analyses/model']);
+ const sent=JSON.parse(calls[2].options.body);assert.deepEqual(Object.keys(sent.session),['id','flowVersion','answers']);
+ assert.equal(await createProductAnalysisAdapter({fetchImpl:async()=>({ok:true,json:async()=>({analysis:{model:'configured',freeOnly:false,routing:'server_managed'}})})}).available(),false);
 });

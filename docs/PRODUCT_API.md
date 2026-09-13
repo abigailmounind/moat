@@ -1,7 +1,7 @@
 # 产品 API 与仓储契约 V1
 
-- 用途：开发态匿名会话、聚合与路径/计划对象写入、幂等重试和内存/PostgreSQL 仓储契约。
-- 更新：2026-09-11。架构与数据处理边界见 [后端架构](BACKEND_ARCHITECTURE.md)，归属规则见 [工作区规范](STAGE11_WORKSPACES.md)，模块职责见 [工程规范](ENGINEERING_STRUCTURE.md)。
+- 用途：开发态匿名会话、规则/可选模型分析、确认档案与工作区写入、幂等重试和内存/PostgreSQL 仓储契约。
+- 更新：2026-09-12。架构与数据处理边界见 [后端架构](BACKEND_ARCHITECTURE.md)，归属规则见 [工作区规范](STAGE11_WORKSPACES.md)，模块职责见 [工程规范](ENGINEERING_STRUCTURE.md)。
 
 ## 当前接口
 
@@ -11,10 +11,16 @@
 |---|---|---|
 | GET /api/v1/health | {status:"ok",apiVersion:"1"} | 支持 HEAD；表示 HTTP 可响应，不持续探测数据库 |
 | GET /api/v1/capabilities | 持久化、幂等、对象资源、身份、分析模式 | 按实际仓储报告 memory/false 或 postgres/true；模型默认关闭 |
+| POST /api/v1/visits | {apiVersion:"1",recorded:true} | Worker 同源请求；不创建会话，只保存时间、国家代码、地区、城市和 0.1 度坐标，写入时删除 30 天前记录 |
+| GET /api/v1/admin/visits | {apiVersion,retentionDays,total,returned,limit,visits} | Worker 私有管理接口；要求 `Authorization: Bearer <VISITOR_STATS_ADMIN_KEY>`，总数覆盖近 30 天，明细最多 500 条 |
 | POST /api/v1/session | {session:{subject}} | 校验 Origin；创建为 201，已有会话为 200 |
 | DELETE /api/v1/session | {apiVersion:"1",signedOut:true,scope:"current_session"} | 同源；撤销当前令牌，成功后清 Cookie；重复退出可重试 |
 | GET /api/v1/session | {session:{subject}} | 有效服务端会话 |
-| GET /api/v1/bootstrap | {apiVersion,subject,data:{profile,workspace}} | 从会话决定主体 |
+| GET /api/v1/bootstrap | {apiVersion,subject,data:{profile,profileRevision,workspace}} | 从会话决定主体 |
+| POST /api/v1/analyses/rules | {apiVersion,analysis:{mode:"rules",ruleVersion,proposal}} | 有效会话；只处理本次提交的探索输入，不保存原始回答或候选 |
+| POST /api/v1/analyses/model | model 候选；失败时为显式标记 fallbackFrom/fallbackReason 的 rules 候选 | 有效会话、同源 JSON、模型通道完整启用；后台选择模型，不返回具体模型名 |
+| GET /api/v1/profile | {apiVersion,profile,revision} | 当前主体的确认档案与档案版本 |
+| POST /api/v1/profile/change-sets | {apiVersion,profile,revision,duplicate} | 同源 JSON、档案 revision、确认变更集和必填幂等键 |
 | GET /api/v1/workspace | {apiVersion,workspace} | 当前主体 |
 | PUT /api/v1/workspace | {apiVersion,workspace} | 结构、版本、来源及可选幂等键 |
 | GET /api/v1/paths、/plans | {apiVersion,revision,paths} 或 {apiVersion,revision,plans} | 当前主体 |
@@ -23,9 +29,17 @@
 | PATCH /api/v1/paths/:id、/plans/:id | {apiVersion,workspace}，200 | 完整对象替换，非局部字段合并 |
 | DELETE /api/v1/paths/:id、/plans/:id | {apiVersion,workspace}，200 | 请求体含 revision；事务处理关联影响 |
 
-表中多个资源简写共用 `/api/v1` 前缀。能力枚举 rules/manual 不表示服务端分析接口已实现；bootstrap.profile 仍为空探索档案，暂无探索确认写入或迁移接口。页面默认本地保存；数据与同步页明确确认后可连接服务器工作区。探索档案仍独立保存在浏览器。
+表中多个资源简写共用 `/api/v1` 前缀。页面默认使用浏览器本地规则和本地档案；仅当能力接口确认 Free-only 后台可用，且用户在本轮主动同意阿里云百炼新加坡处理时，页面才建立匿名会话并调用模型接口。该同意不持久化，刷新后恢复关闭。分析不会自动把候选变成确认内容，档案写入只接受逐条确认生成的变更集。
 
-匿名 Cookie 使用 HttpOnly、SameSite=Lax、Path=/ 和 30 天浏览器有效期；直接 TLS 连接增加 Secure。内存会话随进程消失；PostgreSQL 保存令牌哈希及固定 30 天服务端有效期，过期后不可读取。尚无续期、回收任务、账号恢复或跨设备登录；代理部署仍待建设。
+当前接口表以 Node + 内存/PostgreSQL 参考实现为完整口径。Cloudflare Worker 入口支持 health、capabilities、session，profile/workspace/bootstrap 读取，profile/change-sets、paths、plans、growth-records、proof、imports/workspace 写入，data/export、data 删除，以及 analyses/rules 和默认关闭的 analyses/model；账号及聚合写入仍未开放。读取复核存储 JSON 与 revision，异常返回 503 `stored_data_invalid`；bootstrap/导出的两张表位于同一 D1 batch。
+
+Worker 写入在同一 batch 内清理过期回执、条件占用共享幂等键（每主体最多 100 条）、凭请求所有权条件更新文档并读取首次响应。相同内容并发重试返回同一响应及 `Idempotency-Replayed: true`；同键不同内容返回 409；任一 SQL 失败回滚数据和回执。原 24 小时有效期与 revision 语义不变。主体删除按工作区 revision 条件执行并级联清理数据、回执、个人模型计数与在途锁；全局无个人标识的日计数保留。
+
+Worker 两个分析端点要求会话、同源、JSON 和有效 session，实际流式请求体上限为 64 KiB；只输出待确认候选，不写入档案。公开模式下缺少可信 IP 或限流绑定、绑定故障返回 503 `rate_limit_unavailable`；桶拒绝返回 429 `rate_limited`，均带 `Retry-After` 且发生在 D1 访问之前。模型未完整配置返回 503 `model_disabled`；同主体在途/小时超限分别返回 429 `model_in_progress` / `model_rate_limited`。D1 原子预占所有供应商尝试的 UTC 日名额（含多模型切换），耗尽后以 `fallbackReason: daily_limit` 返回规则候选。小时窗口按 UTC 整点，取消或失败不退还已占名额；在途锁有超时并按所有者释放。D1 故障不允许无计数调用供应商。边缘桶仅用于请求保护，非全局精确计费；本地专项不等于生产费用或模型质量验收。
+
+Pages API 产物通过 `MOAT_API` 服务绑定保留原同源请求。Pages 层不创建身份、不持有数据库/模型 Key、不改写 Origin 或 Cookie。绑定故障、上游重定向或非 JSON 响应统一返回 503 `api_unavailable`、`retryable:true`、`Retry-After:60` 与 `Cache-Control:no-store`；其余后端 JSON 状态、回执、下载和 Cookie 头原样透传，不用静态首页掩盖失败。该路径已本地联调，远程配置和发布待确认。
+
+匿名 Cookie 使用 HttpOnly、SameSite=Lax、Path=/ 和 30 天浏览器有效期；Node 直接 TLS 连接增加 Secure，Worker 始终设置 Secure。内存会话随进程消失；PostgreSQL/D1 保存令牌哈希及固定 30 天服务端有效期，过期后不可读取。尚无续期、回收任务、账号恢复或跨设备登录。
 
 ## 当前会话退出
 
@@ -55,6 +69,16 @@
 - `DELETE /api/v1/growth-records/:id/proof` 请求 `{revision}`，撤回快照，保留成长记录。
 - `POST /api/v1/imports/workspace` 请求 `{revision,workspace,confirmed:true}`；仅目标 revision 为 0 且没有路径、计划、成长记录时允许复制，保留旧数据兼容，不自动修正归属。原浏览器内容不删除；不导入探索档案。
 - 上述写操作都要求会话、同源 JSON 和幂等键，成功返回 `{apiVersion,workspace}`。未确认/无效快照返回 422 confirmation_required/invalid_proof，非法导入返回 422 invalid_import，非空目标返回 409 import_requires_empty。重放、版本及主体隔离沿用对象命令规则。
+
+## 服务端规则分析与确认档案
+
+- `POST /api/v1/analyses/rules` 请求体为 `{session}`。`session` 保留本轮 `id`、`flowVersion` 和回答数组；至少需要经历、行动、成果三类输入，q6 方法和 q7 河流依据可省略或跳过。服务器复用 `shared/rules-analysis.js` 与 `shared/understanding.js`，输出仍是 `contract_version: "0.1"` 的待确认候选；缺少必要输入返回 422 `invalid_analysis_input`。接口不接收主体 ID，不读取工作区或现有档案，也不记录原始输入日志。
+- `POST /api/v1/analyses/model` 接受相同 `{session}`，只把校验后的允许字段发送给服务端配置的百炼新加坡模型。路由顺序由后台白名单决定；免费额度 403 会熔断该进程中的对应模型并尝试下一项，429 可尝试下一项，其他错误不跨模型重试以避免重复消耗。成功返回 `mode:"model"`、固定供应商标识和 `routing:"server_managed"`，不暴露模型名。
+- 模型超时、额度全部耗尽、限流、无效输出或供应商失败时，以 200 返回确定性规则候选，同时明确 `mode:"rules"`、`fallbackFrom:"model"` 和安全的 `fallbackReason`。模型未配置则返回 503 `model_disabled`。所有模型输出都经过同一候选契约检查，不写档案、不保存原始回答。完整调用默认超时 75 秒，可在 1–120 秒内配置；客户端中止不保证供应商停止生成，因此不能用短超时替代额度保护。
+- 同一服务端会话同时只允许一个模型请求；第二个在途请求返回 429 `model_in_progress`。每会话进程内默认每小时最多 6 次，达到后返回 429 `model_rate_limited` 和 `Retry-After`。该保护防止连点和普通重试消耗额度，但重启会清零，匿名用户也可新建会话，因此正式公开仍需边缘/IP 级限流。
+- `GET /api/v1/profile` 返回 `{profile,revision}`。新匿名主体从 revision 0 和空档案开始；档案 revision 独立于工作区 revision。
+- `POST /api/v1/profile/change-sets` 请求体为 `{revision,changeSet}`，要求 `Idempotency-Key`。仓储在主体写入边界内校验变更集、删除本轮 scope 中的旧条目、写入确认内容并递增档案 revision；重复键重放原响应，重复的同一变更集不会再次递增版本。陈旧版本返回 409 `revision_conflict` 并带当前档案；非法变更集返回 422 `invalid_profile_change`。
+- 档案回执与工作区回执共用主体的幂等容量和键命名空间；PostgreSQL 通过 `002_profile_writes.sql` 添加档案版本和独立回执表，事务中先锁工作区再锁档案，删除主体会级联清理。
 
 ## 聚合工作区提交
 
@@ -93,7 +117,9 @@ PUT 请求体为 `{revision,workspace}`，revision 与 workspace.revision 必须
 | 409 revision_conflict | 保留草稿，对照当前版本；retryable 不表示允许直接覆盖 |
 | 409 already_exists / source_direction_conflict | 核对已有路径或计划，保留其编辑 |
 | 409 idempotency_conflict | 新内容改用新键；retryable 为 false |
-| 503 storage_unavailable / idempotency_capacity | 保留可靠数据和输入，稍后重试 |
+| 429 model_in_progress / model_rate_limited | 不重复提交；按 Retry-After 等待，规则与手工模式仍可用 |
+| 503 storage_unavailable / idempotency_capacity / free_tier_exhausted | 保留可靠数据和输入，稍后重试；免费额度用尽时不切换付费资源 |
+| 503 stored_data_invalid | 停止覆盖服务器内容，保留本地可靠副本并进入恢复流程 |
 
 ## 当前主体的服务端导出与删除
 

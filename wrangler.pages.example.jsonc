@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Preparation only: replace the output path and confirm the staging project.
+  // Do not point preview deployments at the production API or database.
+  "name": "moat-staging",
+  "pages_build_output_dir": "/replace-with-generated-moat-pages-directory",
+  "compatibility_date": "2026-09-12",
+  "services": [{ "binding": "MOAT_API", "service": "moat-api-staging" }],
+  "env": {
+    "preview": {
+      "services": [{ "binding": "MOAT_API", "service": "moat-api-staging" }]
+    }
+  }
+}

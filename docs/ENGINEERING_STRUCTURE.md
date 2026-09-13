@@ -6,7 +6,7 @@
 
 ## 1. 技术基线与适用范围
 
-当前应用使用原生 JavaScript ES Modules、DOM、SVG、CSS 和 Node HTTP 服务，没有构建框架或打包器；服务端新增 `pg` 数据库驱动及锁文件。Node 运行要求见 README。沿用现有模块，新增功能按职责拆分；数据库驱动用于已授权的持久化切片；不因目录整理引入 React、动效库或云服务。
+当前浏览器应用使用原生 JavaScript ES Modules、DOM、SVG、CSS，没有前端构建框架；Node 服务使用 `pg` 数据库驱动。Workers 开发使用锁文件中的 Wrangler 工具链，隔离发布检查复用其 esbuild/Miniflare 打包和运行 Worker，不改变前端技术栈。Node 运行要求见 README。沿用现有模块，新增功能按职责拆分；不因目录整理引入 React、动效库或云服务。
 
 下文“当前结构”描述已存在的文件与行为，“开发规范”约束后续修改，“待收口”明确尚未满足的目标。结构规范不替代产品决定；完成状态只在 milestones 维护。数据库、认证、模型与部署选择的权限沿用 AGENTS，本文不追加授权。
 
@@ -25,14 +25,18 @@ moat/
 │  ├─ postgres-repository.mjs PostgreSQL 事务、快照读取与持久回执
 │  ├─ postgres-migrations.mjs / migrations/ 版本化 SQL 迁移
 │  ├─ product-runtime.mjs    根据配置选择仓储及管理连接池
+│  ├─ aliyun-model-provider.mjs 百炼新加坡多模型、免费额度熔断与输出校验
 │  └─ analysis-service.mjs   旧分析接口与供应商注入边界
 ├─ shared/
 │  ├─ growth-proof.js        成长成果快照纯逻辑
 │  ├─ understanding.js       探索候选纯校验，供浏览器、服务与 CLI 复用
+│  ├─ rules-analysis.js      无模型规则候选生成与输入边界
+│  ├─ profile-changes.js     确认档案变更集校验与原子应用
 │  ├─ profile.js             确认档案、成果快照校验与空档案工厂
 │  ├─ workspace.js           工作区结构、枚举、日期校验与空工作区
 │  └─ workspace-operations.js 路径/计划命令、归属变更与历史上下文
 ├─ contracts/                候选 JSON Schema 与合成样例
+├─ cloudflare/               Workers 入口、D1 迁移与免费方案说明；与 Node 实现并存
 ├─ scripts/                  启动兼容入口、检查及资产派生工具
 ├─ tests/                    领域、状态、存储、渲染与服务回归
 ├─ assets/                   登记资产、字体、参考与资产归档
@@ -49,13 +53,14 @@ moat/
 
 `npm start` → `scripts/serve.mjs` → `backend/server.mjs`；`/` 映射 `frontend/index.html`，由 `frontend/src/main.js` 依据 `view` 动态加载页面。URL 与实际目录不必相同，页面路由完整列表见 README。
 
-静态服务使用明确白名单，不公开整个仓库。五个共享模块是浏览器需要的公共源码；`backend/`、项目文档和非白名单路径不会因存放在仓库而自动可访问。现有 `frontend/src/` 文件名模式内的新 JS/CSS 可直接对外提供，新增目录或共享文件则需核对白名单。修改公共模块路径时同时核对 import、静态白名单、类型和 HTTP 检查。禁止将密钥、用户数据或服务内部配置放到公共路径。
+静态服务使用明确白名单，不公开整个仓库。浏览器需要的共享模块逐项登记在白名单中；`backend/`、项目文档和非白名单路径不会因存放在仓库而自动可访问。现有 `frontend/src/` 文件名模式内的新 JS/CSS 可直接对外提供，新增目录或共享文件则需核对白名单。修改公共模块路径时同时核对 import、静态白名单、类型和 HTTP 检查。禁止将密钥、用户数据或服务内部配置放到公共路径。
 
 ### 前端职责
 
 | 功能 | 当前模块 | 修改入口与边界 |
 |---|---|---|
-| 页面加载与导航 | `main.js`、`sidebar.js` | 前者加载页面和工作区样式；后者供探索、工作区、成长页复用导航，地图页仍在 app 内生成同结构导航 |
+| 页面加载与导航 | `main.js`、`sidebar.js` | `/` 加载无个人数据依赖的封面；`view=river` 加载个人地图；后者供探索、工作区、成长与管理页复用导航 |
+| 封面与访客管理 | `landing.js`、`visitors.js` | 封面只使用基础地图并匿名登记访问；访客明细必须经过服务端管理密钥验证，密钥不持久化到浏览器 |
 | 我的河 | `app.js`、`state.js` | 事件、详情与视图状态；app 区分个人和演示数据 |
 | 地图渲染与投影 | `map.js`、`personal-map.js`、`local-proof.js`、`data.js` | 几何与 SVG、个人数据投影、证明显示、合成关系与共享构图；投影不得写回档案 |
 | 探索页面与状态 | `exploration.js`、`exploration-state.js` | 表单、步骤、取消与失败状态 |
@@ -63,7 +68,7 @@ moat/
 | 探索保存 | `exploration-storage.js` | 读取、校验、合并与保存浏览器确认档案 |
 | 路径与计划 | `workspaces.js`、`workspace-model.js`、`workspace-form.js`、`direction-path.js` | 页面、数据操作与本地提交、表单规则、方向带入草稿和重入已有路径 |
 | 成长与快照 | `growth.js`、`growth-proof.js` | 记录页面、成果快照生成与个人档案投影 |
-| 工作区连接 | `workspace-connection.js`、`workspace-feedback.js`、`sync.js` | 本地/服务器读取、提交保护、显式复制和切换、失败重试 |
+| 工作区与档案连接 | `workspace-connection.js`、`exploration-connection.js`、`workspace-feedback.js`、`sync.js` | 工作区和探索确认档案分别进行本地/服务器读取、提交保护、显式复制和切换、失败重试 |
 | 客户端预留 | `analysis-client.js` | 旧分析接口的远程适配器；当前探索页面没有启用它 |
 | 文本与样式 | `exploration-render-utils.js`、`styles.css`、`workspaces.css` | 文本转义与界面样式；具体视觉规则和资产来源查对应规范 |
 
@@ -80,7 +85,16 @@ moat/
 | `backend/product-runtime.mjs`、`postgres-migrations.mjs`、`migrations/` | 连接配置、迁移校验、迁移事务及连接池关闭 | 启动不自动应用迁移；失败不切换存储模式 |
 | `shared/workspace-operations.js` | 复用移河、删除、历史上下文；校验路径/计划对象命令 | 不读写存储，不决定是否迁移用户数据 |
 | `backend/analysis-service.mjs` | 输入筛选、供应商注入、超时、取消与输出校验 | 默认没有供应商，不直接写正式档案 |
+| `backend/aliyun-model-provider.mjs` | 校验新加坡端点、后台模型白名单、Free-only 确认、日上限、额度熔断与候选契约 | 依赖 contracts 的 JSON 输出契约及 shared 规则参考；不管理控制台额度、不选择付费模型、不向前端暴露密钥 |
+| `cloudflare/worker.mjs`、`cloudflare/migrations/` | Worker Fetch API、D1、匿名会话、一致读取、档案/工作区操作、分析路由、主体级联删除及独立访客统计 | 不提供账号，不替换 Node 服务；本地验证不能替代远程预发布与备份恢复 |
+| `cloudflare/d1-commit.mjs` | 单事务过期清理、共享键/容量预占、请求所有权、条件更新与首次响应重放 | 不复制领域操作，不把事务外计数当作并发约束 |
+| `cloudflare/model-gateway.mjs`、`request-guards.mjs` | Free-only 配置闸门、D1 日/小时名额与在途锁、输入裁剪、规则回退、边缘桶和流式体积限制 | 不读取控制台实际额度、不替代供应商计费保护、不把边缘桶当作全局账本 |
+| `cloudflare/pages-worker.mjs`、`pages-routes.json` | Pages advanced-mode 同源转发、静态路由隔离、绑定失败关闭 | 只依赖 `MOAT_API` 和 `ASSETS`；不持有模型 Key 或 D1，不修改后端身份/来源校验 |
+| `scripts/lib/pages-package.mjs`、`build-pages.mjs` | 共用隔离打包；CLI 先检查，显式选 API 产物 | 不上传仓库、不部署；默认静态，不把后端或配置复制到产物 |
+| `scripts/check-pages-api.mjs`、`check-pages.mjs` | 本地双 Worker/D1 服务绑定专项；可选只读远程 API 检查 | 本地资产路由模拟不等于远程 Pages 或浏览器验收；只读检查不证明数据库写入 |
 | `shared/profile.js` | 确认档案及成果快照的结构与引用校验 | 不判断自述真实性、不推断资本强度 |
+| `shared/profile-changes.js` | 变更集范围、引用、操作类型和档案应用 | 不决定用户是否确认，不写入存储 |
+| `shared/rules-analysis.js` | 规则输入边界、确定性候选生成与共享候选校验 | 不读取工作区，不保存原始回答，不调用模型 |
 | `shared/workspace.js` | 工作区结构、历史兼容、日期与基本引用 | 不等同于每项新增、移河、删除操作的完整业务授权 |
 
 ## 4. 依赖规则与现存例外
@@ -113,11 +127,11 @@ moat/
 
 | 数据层 | 当前位置 | 版本与生命周期 |
 |---|---|---|
-| 探索回答、确认前编辑、页面草稿 | 当前页面内存 | 离开或刷新可能丢失；未自动恢复 |
+| 探索回答、确认前编辑、页面草稿 | 当前页面内存 | 离开或刷新可能丢失；未自动恢复；服务端规则请求只处理本次提交 |
 | 确认探索档案 | `localStorage` 的探索专用键 | 信封版本及对象/变更集校验；精确键见探索规范 |
 | 路径、计划、里程碑、成长和快照 | `localStorage` 的工作区专用键 | 工作区 version 与 revision；精确键及删除语义见工作区规范 |
 | 地图入场偏好 | `sessionStorage` | 展示偏好，不作身份或业务状态 |
-| 匿名主体、空档案、工作区、回执 | 内存或 PostgreSQL 仓储 | 聚合 revision；内存重启清空，PostgreSQL 持久化，参数见 API 契约 |
+| 匿名主体、确认档案、工作区、回执 | 内存或 PostgreSQL 仓储 | 档案与工作区各自 revision；内存重启清空，PostgreSQL 持久化，参数见 API 契约 |
 | 合成示例 | `data.js`、contracts 样例、测试夹具 | 不冒充个人记录，不用于填满个人空态 |
 
 `contract_version`、本地存储 `version` 和工作区 `revision` 分别承担交换格式、存储格式和并发版本职责，不能互相替代。修改字段时同时考虑旧档案、候选校验、快照与 API 的兼容性。
@@ -159,6 +173,8 @@ moat/
 Pages 静态发布由 `scripts/build-pages.mjs` 在测试和静态检查通过后生成独立临时目录；`scripts/check-pages.mjs` 验证线上页面、模块语法与资源响应。部署流程及本轮证据见 [Pages 成长页发布](reports/pages-growth-release.md)。这些检查不替代真实浏览器行为与视觉验收。
 
 `scripts/browser-flow-check.mjs` 使用外置 Playwright 与 Chromium，连续验证无 AI 本地闭环的桌面和窄屏浏览器行为；依赖和浏览器不进入生产依赖。运行参数见根 README，本轮证据见 [手工探索入口验证](reports/manual-exploration-entry.md)。触控模拟和无横向溢出检查不替代实体设备或字体视觉验收。
+
+`scripts/browser-profile-sync-check.mjs` 需配合 PostgreSQL 模式服务，验证确认档案的显式复制、服务器保存、刷新恢复、本地/服务器切换与地图投影；外置浏览器参数见根 README，证据见 [探索档案同步验证](reports/exploration-profile-sync.md)。测试会写入合成匿名主体，只能使用隔离数据库。
 
 | 改动 | 必需关注的证据 | 不足以证明 |
 |---|---|---|

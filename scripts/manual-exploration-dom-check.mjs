@@ -25,11 +25,11 @@ try{
  assert.equal(localStorage.length,0);
  const write=window.Storage.prototype.setItem;
  window.Storage.prototype.setItem=()=>{throw Error('synthetic quota');};
- click('[data-apply-update]');assert.ok(document.querySelector('.save-error'));assert.equal(localStorage.length,0);
+ click('[data-apply-update]');await new Promise(resolve=>setTimeout(resolve,0));assert.ok(document.querySelector('.save-error'));assert.equal(localStorage.length,0);
  window.Storage.prototype.setItem=write;
- click('[data-apply-update]');assert.match(document.querySelector('h1').textContent,/已保存/);
+ click('[data-apply-update]');await new Promise(resolve=>setTimeout(resolve,0));assert.match(document.querySelector('h1').textContent,/已保存/);
  const saved=localStorage.getItem(localStorage.key(0));assert.ok(saved);
- click('[data-back]');click('[data-apply-update]');assert.deepEqual(JSON.parse(localStorage.getItem(localStorage.key(0))).profile,JSON.parse(saved).profile);
+ click('[data-back]');click('[data-apply-update]');await new Promise(resolve=>setTimeout(resolve,0));assert.deepEqual(JSON.parse(localStorage.getItem(localStorage.key(0))).profile,JSON.parse(saved).profile);
  assert.deepEqual(errors,[]);
  console.log('Manual exploration DOM passed: direct entry, confirmation gate, zero inferred links/directions, explicit save, quota failure, retry and duplicate save.');
 }finally{dom.window.close();}

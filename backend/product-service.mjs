@@ -1,10 +1,13 @@
 import {createMemoryProductRepository,idempotencyPolicy,validIdempotencyKey} from './product-repository.mjs';
+import {runRulesAnalysis,validateRulesSession} from '../shared/rules-analysis.js';
+import {validateUnderstandingProposal} from '../shared/understanding.js';
 export {createMemoryProductRepository} from './product-repository.mjs';
 
 const API_VERSION='1';
 const SESSION_COOKIE='moat_session';
 const sessionMaxAge=60*60*24*30;
 const maxWorkspaceBytes=256*1024;
+const hourMs=60*60*1000;
 
 async function readJsonBody(req,maxBytes=maxWorkspaceBytes){
  let size=0;const chunks=[];
@@ -35,7 +38,33 @@ function sessionCookie(req,token){
  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=${sessionMaxAge}; HttpOnly; SameSite=Lax${secure}`;
 }
 
-export function createProductService({repository=createMemoryProductRepository(),modelConfigured=false,allowAggregateWrites=repository.durable!==true}={}){
+const modelFallbackReason=error=>{
+ if(error?.name==='AbortError'||error?.message==='model_timeout')return 'timeout';
+ if(error?.message==='free_models_exhausted')return 'free_models_exhausted';
+ if(error?.message==='model_daily_limit')return 'daily_limit';
+ return 'model_unavailable';
+};
+
+function modelSession(session){
+ return {
+  id:session.id,
+  ...(typeof session.flowVersion==='string'&&session.flowVersion.length<=100?{flowVersion:session.flowVersion}:{}),
+  answers:session.answers.map(answer=>({questionId:answer.questionId,kind:answer.kind,value:answer.questionId==='q5'?{outcomes:[...answer.value.outcomes],source:answer.value.source}:Array.isArray(answer.value)?[...answer.value]:answer.value,skipped:answer.skipped}))
+ };
+}
+
+export function createProductService({repository=createMemoryProductRepository(),modelProvider=null,modelConfigured=Boolean(modelProvider),modelTimeoutMs=75000,modelCallsPerHour=6,now=()=>Date.now(),allowAggregateWrites=repository.durable!==true}={}){
+ if(!Number.isSafeInteger(modelTimeoutMs)||modelTimeoutMs<1000||modelTimeoutMs>120000)throw new Error('invalid_model_timeout');
+ if(!Number.isSafeInteger(modelCallsPerHour)||modelCallsPerHour<1||modelCallsPerHour>100)throw new Error('invalid_model_rate_limit');
+ const hasModel=Boolean(modelProvider)&&modelConfigured;
+ const modelSubjects=new Map();
+ const acquireModelSlot=subjectId=>{
+  const current=now();let entry=modelSubjects.get(subjectId);
+  if(!entry||current-entry.windowStarted>=hourMs){entry={windowStarted:current,calls:0,inFlight:false};modelSubjects.set(subjectId,entry);}
+  if(entry.inFlight)return {ok:false,code:'model_in_progress',retryAfter:1};
+  if(entry.calls>=modelCallsPerHour)return {ok:false,code:'model_rate_limited',retryAfter:Math.max(1,Math.ceil((entry.windowStarted+hourMs-current)/1000))};
+  entry.calls++;entry.inFlight=true;return {ok:true,release:()=>{entry.inFlight=false;}};
+ };
  return async function handleProduct(req,res){
   const send=(status,value,headers={})=>{
    res.writeHead(status,{'Content-Type':'application/json;charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers});
@@ -50,7 +79,7 @@ export function createProductService({repository=createMemoryProductRepository()
   }
   if(route==='/api/v1/capabilities'){
    if(req.method!=='GET'){fail(405,'method_not_allowed','请求方法不受支持。');return;}
-   send(200,{apiVersion:API_VERSION,persistence:{mode:repository.kind,durable:repository.durable===true},workspaceWrites:{aggregateEnabled:allowAggregateWrites,idempotency:{header:'Idempotency-Key',required:false,...(repository.idempotency??idempotencyPolicy)}},objectWrites:{resources:['paths','plans','growth-records'],proofConfirmation:true,emptyWorkspaceImport:true,revisionScope:'workspace',idempotencyRequired:true},identity:{anonymousSession:true,account:false},analysis:{availableModes:modelConfigured?['model','rules','manual']:['rules','manual'],model:modelConfigured?'configured':'disabled',defaultMode:modelConfigured?'model':'rules'}});return;
+   send(200,{apiVersion:API_VERSION,persistence:{mode:repository.kind,durable:repository.durable===true},workspaceWrites:{aggregateEnabled:allowAggregateWrites,idempotency:{header:'Idempotency-Key',required:false,...(repository.idempotency??idempotencyPolicy)}},objectWrites:{resources:['paths','plans','growth-records'],proofConfirmation:true,emptyWorkspaceImport:true,revisionScope:'workspace',idempotencyRequired:true},profileWrites:{changeSets:true,revisionScope:'profile',idempotencyRequired:true},identity:{anonymousSession:true,account:false},analysis:{availableModes:hasModel?['model','rules','manual']:['rules','manual'],serviceModes:hasModel?['model','rules']:['rules'],model:hasModel?'configured':'disabled',routing:hasModel?'server_managed':null,freeOnly:hasModel?modelProvider.freeOnly===true:null,defaultMode:hasModel?'model':'rules'}});return;
   }
   if(route==='/api/v1/session'&&req.method==='POST'){
    if(!sameOrigin(req)){fail(403,'origin_rejected','请求来源未通过校验。');return;}
@@ -97,6 +126,66 @@ export function createProductService({repository=createMemoryProductRepository()
    }
    send(200,{apiVersion:API_VERSION,deleted:true,scope:'server_subject'},
     {'Set-Cookie':`${SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax${req.socket?.encrypted?'; Secure':''}`});return;
+  }
+  if(route==='/api/v1/analyses/rules'){
+   if(req.method!=='POST'){fail(405,'method_not_allowed','请求方法不受支持。');return;}
+   if(!subject){fail(401,'session_required','需要先建立产品会话。');return;}
+   if(!sameOrigin(req)){fail(403,'origin_rejected','请求来源未通过校验。');return;}
+   if(String(req.headers['content-type']||'').split(';')[0].trim().toLowerCase()!=='application/json'){fail(415,'unsupported_media_type','请使用 application/json 提交内容。');return;}
+   let body;
+   try{body=await readJsonBody(req,64*1024);}catch(error){const tooLarge=error.code==='body_too_large';fail(tooLarge?413:400,tooLarge?'body_too_large':'invalid_json',tooLarge?'请求体过大。':'请求体不是有效 JSON。');return;}
+   const checked=validateRulesSession(body?.session);
+   if(!checked.ok){fail(422,'invalid_analysis_input','请补齐本轮经历、行动和成果输入，并核对补充依据。');return;}
+   const proposal=runRulesAnalysis(body.session);
+   send(200,{apiVersion:API_VERSION,analysis:{mode:'rules',ruleVersion:'0.1',proposal}});return;
+  }
+  if(route==='/api/v1/analyses/model'){
+   if(req.method!=='POST'){fail(405,'method_not_allowed','请求方法不受支持。');return;}
+   if(!subject){fail(401,'session_required','需要先建立产品会话。');return;}
+   if(!sameOrigin(req)){fail(403,'origin_rejected','请求来源未通过校验。');return;}
+   if(!hasModel){fail(503,'model_disabled','模型整理通道尚未启用。',true);return;}
+   if(String(req.headers['content-type']||'').split(';')[0].trim().toLowerCase()!=='application/json'){fail(415,'unsupported_media_type','请使用 application/json 提交内容。');return;}
+   let body;
+   try{body=await readJsonBody(req,64*1024);}catch(error){const tooLarge=error.code==='body_too_large';fail(tooLarge?413:400,tooLarge?'body_too_large':'invalid_json',tooLarge?'请求体过大。':'请求体不是有效 JSON。');return;}
+   const checked=validateRulesSession(body?.session);
+   if(!checked.ok){fail(422,'invalid_analysis_input','请补齐本轮经历、行动和成果输入，并核对补充依据。');return;}
+   const slot=acquireModelSlot(subject.id);
+   if(!slot.ok){send(429,{error:{code:slot.code,message:slot.code==='model_in_progress'?'本轮整理仍在进行，请稍候。':'模型整理请求较频繁，请稍后再试。',retryable:true}},{'Retry-After':String(slot.retryAfter)});return;}
+   const session=modelSession(body.session),controller=new AbortController();
+   const timer=setTimeout(()=>controller.abort(new Error('model_timeout')),modelTimeoutMs);
+   try{
+    const proposal=await modelProvider.analyze(session,{signal:controller.signal});
+    if(proposal?.session_id!==session.id||!validateUnderstandingProposal(proposal,{inputIds:checked.inputIds}).ok)throw new Error('invalid_model_response');
+    send(200,{apiVersion:API_VERSION,analysis:{mode:'model',provider:'aliyun-model-studio',routing:'server_managed',proposal}});
+   }catch(error){
+    const proposal=runRulesAnalysis(session);
+    send(200,{apiVersion:API_VERSION,analysis:{mode:'rules',ruleVersion:'0.1',fallbackFrom:'model',fallbackReason:modelFallbackReason(error),proposal}});
+   }finally{clearTimeout(timer);slot.release();}
+   return;
+  }
+  if(route==='/api/v1/profile'){
+   if(req.method!=='GET'){fail(405,'method_not_allowed','请求方法不受支持。');return;}
+   if(!subject){fail(401,'session_required','需要先建立产品会话。');return;}
+   const result=await repository.readProfile(subject.id);
+   if(!result){fail(404,'subject_not_found','当前会话的数据不存在。');return;}
+   send(200,{apiVersion:API_VERSION,...result});return;
+  }
+  if(route==='/api/v1/profile/change-sets'){
+   if(req.method!=='POST'){fail(405,'method_not_allowed','请求方法不受支持。');return;}
+   if(!subject){fail(401,'session_required','需要先建立产品会话。');return;}
+   if(!sameOrigin(req)){fail(403,'origin_rejected','请求来源未通过校验。');return;}
+   if(String(req.headers['content-type']||'').split(';')[0].trim().toLowerCase()!=='application/json'){fail(415,'unsupported_media_type','请使用 application/json 提交内容。');return;}
+   const idempotencyKey=req.headers['idempotency-key'];
+   if(!validIdempotencyKey(idempotencyKey)){fail(400,'invalid_idempotency_key','请提供有效的幂等键。');return;}
+   let body;
+   try{body=await readJsonBody(req);}catch(error){const tooLarge=error.code==='body_too_large';fail(tooLarge?413:400,tooLarge?'body_too_large':'invalid_json',tooLarge?'请求体过大。':'请求体不是有效 JSON。');return;}
+   if(!Number.isSafeInteger(body?.revision)||body.revision<0||body.revision===Number.MAX_SAFE_INTEGER){fail(422,'invalid_profile','请提供有效的档案版本与确认变更集。');return;}
+   const result=await repository.applyProfileChangeSet(subject.id,body.revision,body.changeSet,{idempotencyKey});
+   if(result.ok){send(200,{apiVersion:API_VERSION,profile:result.profile,revision:result.revision,duplicate:result.duplicate},{'Idempotency-Replayed':String(result.replayed===true)});return;}
+   if(result.code==='revision_conflict'){send(409,{error:{code:result.code,message:'探索档案已有更新，请保留当前确认并核对最新版本。',retryable:true},profile:result.profile,revision:result.revision});return;}
+   const errors={subject_not_found:[404,'当前会话的数据不存在。'],idempotency_conflict:[409,'这个幂等键已用于不同内容，请为新的提交使用新键。'],invalid_idempotency_key:[400,'幂等键格式无效。'],invalid_profile:[422,'请提供有效的档案版本与确认变更集。'],invalid_profile_change:[422,'请核对逐条确认内容和引用关系。'],idempotency_capacity:[503,'可保留的重试记录已满，请保留输入后稍后重试。',true]};
+   const [status,message,retryable=false]=errors[result.code]??[503,'数据服务暂时不可用，请保留当前输入后重试。',true];
+   fail(status,errors[result.code]?result.code:'storage_unavailable',message,retryable);return;
   }
   async function command(build){
    if(!subject){fail(401,'session_required','需要先建立产品会话。');return;}

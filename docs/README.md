@@ -1,6 +1,6 @@
 # 项目文档导航与维护规则
 
-- 更新于 2026-09-10；目录、职责与同步关系按本轮工程文档整理核对。
+- 更新于 2026-09-13；目录、职责与同步关系按本轮工程文档整理核对。
 - 接手顺序：[协作规则](../AGENTS.md) → [PRD](../PRD.md) → [milestones](../milestones.md) → [工程结构与开发规范](ENGINEERING_STRUCTURE.md)，再按任务阅读专题。
 - 本文维护文档定位与同步关系；命令只在 [项目 README](../README.md) 维护，阶段状态只在 milestones 维护。
 
@@ -41,8 +41,8 @@
 | 探索、逐条确认、本地保存 | 探索规范、最短流程、工程规范 | `frontend/src/exploration-*.js`、`exploration.js`、`shared/profile.js`、`contracts/` |
 | 路径、计划、成长与快照 | 工作区规范、工程规范 | `frontend/src/workspace-model.js`、`workspaces.js`、`growth.js`、`growth-proof.js`、`shared/` |
 | API、幂等、仓储替换 | 产品 API、后端架构、工程规范 | `backend/product-service.mjs`、`product-repository.mjs`、`postgres-repository.mjs`、`tests/product-*.test.mjs` |
-| 模型或规则服务化 | 探索规范、后端架构、工程规范的依赖例外 | `backend/analysis-service.mjs`、`frontend/src/exploration-analysis.js`、`analysis-client.js` |
-| 账号、迁移与持久化 | 后端架构、产品 API、工作区规范、milestones | PostgreSQL 适配器、迁移与配置已形成；账号与用户迁移方案仍待落定 |
+| 模型或规则服务化 | 探索规范、后端架构、产品 API、工程规范的依赖例外 | `backend/aliyun-model-provider.mjs`、`product-service.mjs`、`analysis-service.mjs`、前端分析适配器 |
+| 账号、迁移与持久化 | 后端架构、产品 API、工作区规范、milestones | PostgreSQL 参考实现；`cloudflare/` 为 Workers + D1 渐进迁移入口；账号与用户迁移方案仍待落定 |
 | 核对历史与验收 | milestones、下方验证证据、归档索引 | 按日期和范围阅读，保留当时结论 |
 
 ## 文档同步矩阵
@@ -68,6 +68,14 @@
 
 | 记录 | 对应范围 |
 |---|---|
+| [封面与访客地图预发布](reports/staging-cover-visitor-map.md) | 根封面、个人地图显式路由、访客隐私边界、隔离迁移与部署；浏览器下载限制 |
+| [AI 与计划入口修复](reports/staging-ai-plan-entry.md) | 空工作区计划入口、workerd 原生 fetch 回归、AI 配置与真实通道排查 |
+| [隔离预发布验证](reports/cloudflare-staging-release.md) | Free 用户确认、远程 Pages/D1 部署、浏览器档案生命周期、合成数据清理与生产隔离 |
+| [Cloudflare D1 本地写入验证](reports/cloudflare-d1-local.md) | Wrangler 本地迁移、档案写入、幂等重放、并发 revision 与 `.env` 隔离 |
+| [Cloudflare 发布保护验证](reports/cloudflare-release-guards.md) | 真实 D1 同键并发、容量、过期与回滚；模型持久限额、隔离运行时重启及前端协议 |
+| [Pages 同源 API 接入验证](reports/pages-api-integration.md) | 可选 API 打包、实际本地服务绑定/D1、前端安全重试、静态资源隔离与只读预发布检查 |
+| [Cloudflare 隔离预发布前置核对](reports/cloudflare-staging-preflight.md) | 已授权的隔离目标、登录和资源只读核对；订阅权限不足，套餐确认前不写云端 |
+| [百炼免费模型路由](reports/aliyun-free-model-routing.md) | 新加坡端点、后台多模型、Free-only 关闭式配置、熔断回退与当前上线限制 |
 | [补充核对验证](reports/optional-evidence-check.md) | 具体方法、三河明确关系、全部跳过、旧会话兼容及浏览器回归 |
 | [手工入口验证](reports/manual-exploration-entry.md) | 主动手工入口修复、确认和保存失败 DOM 回归、桌面与窄屏浏览器闭环 |
 | [本地规则审查](reports/rules-audit.md) | 卡点推河、固定资本、无成果和删除依据后方向残留的源码与合成复现 |
@@ -82,6 +90,7 @@
 | [连接恢复验证](reports/workspace-recovery.md) | 响应丢失、缓存失败、会话隔离与重试记录保留 |
 | [后端成长接口验证](reports/backend-growth-check.md) | 成长/证明/导入边界及共享仓储专项，持久库验证待执行 |
 | [同步入口修复](reports/sync-entry-fix.md) | 同步页面、静态依赖、存储替身及验证边界 |
+| [探索档案同步验证](reports/exploration-profile-sync.md) | 确认档案显式切换、复制、版本冲突、重试与本地副本保留 |
 | [候选校验共享化](reports/shared-understanding.md) | 共享校验、兼容入口、CLI 收口及本轮验证阻碍 |
 | [后端持久化首轮](reports/backend-persistence-v1.md) | PostgreSQL、路径/计划对象接口、真实事务与 Node 重启恢复 |
 | [工程文档整理核对](reports/engineering-docs-audit.md) | 本次文档职责、结构、路径与一致性核对；无运行时修改 |

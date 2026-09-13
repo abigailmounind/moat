@@ -1,5 +1,6 @@
 import {createHash,randomBytes,randomUUID} from 'node:crypto';
 import {createPrototypeProfile} from '../shared/profile.js';
+import {applyProfileChangeSet} from '../shared/profile-changes.js';
 import {validWorkspace} from '../shared/workspace.js';
 import {applyWorkspaceMutation} from '../shared/workspace-operations.js';
 import {idempotencyPolicy,validIdempotencyKey} from './product-repository.mjs';
@@ -34,6 +35,12 @@ async function loadWorkspace(client,subjectId){
  return workspace;
 }
 
+async function loadProfile(client,subjectId){
+ const result=await client.query('SELECT payload,revision FROM moat_profiles WHERE subject_id=$1',[subjectId]);
+ if(!result.rowCount)return null;
+ return {profile:result.rows[0].payload,revision:Number(result.rows[0].revision)};
+}
+
 // The workspace remains the concurrency boundary. Separate object rows and
 // relationship constraints preserve order and legacy shared plans.
 async function replaceWorkspace(client,subjectId,workspace){
@@ -62,14 +69,17 @@ export function createPostgresProductRepository({pool,tokenFactory=()=>randomByt
    if(!locked.rowCount)return {ok:false,code:'subject_not_found'};
    if(idempotencyKey!==undefined){
     await client.query('DELETE FROM moat_idempotency_receipts WHERE subject_id=$1 AND expires_at<=clock_timestamp()',[subjectId]);
+    await client.query('DELETE FROM moat_profile_receipts WHERE subject_id=$1 AND expires_at<=clock_timestamp()',[subjectId]);
     const receipt=await client.query('SELECT fingerprint,workspace FROM moat_idempotency_receipts WHERE subject_id=$1 AND operation_key=$2',[subjectId,idempotencyKey]);
     if(receipt.rowCount)return receipt.rows[0].fingerprint===fingerprint?{ok:true,workspace:receipt.rows[0].workspace,replayed:true}:{ok:false,code:'idempotency_conflict'};
+    const otherReceipt=await client.query('SELECT 1 FROM moat_profile_receipts WHERE subject_id=$1 AND operation_key=$2',[subjectId,idempotencyKey]);
+    if(otherReceipt.rowCount)return {ok:false,code:'idempotency_conflict'};
    }
    const current=await loadWorkspace(client,subjectId);
    if(current.revision!==revision)return {ok:false,code:'revision_conflict',workspace:current};
    const built=build(current);if(!built.ok)return built;
    if(idempotencyKey!==undefined){
-    const count=await client.query('SELECT count(*)::integer AS count FROM moat_idempotency_receipts WHERE subject_id=$1',[subjectId]);
+    const count=await client.query('SELECT (SELECT count(*) FROM moat_idempotency_receipts WHERE subject_id=$1)+(SELECT count(*) FROM moat_profile_receipts WHERE subject_id=$1) AS count',[subjectId]);
     if(count.rows[0].count>=maxKeysPerSubject)return {ok:false,code:'idempotency_capacity'};
    }
    const next={...built.workspace,revision:revision+1};
@@ -102,10 +112,14 @@ export function createPostgresProductRepository({pool,tokenFactory=()=>randomByt
   async readBootstrap(subjectId){
    if(!validSubject(subjectId))return null;
    return transaction(pool,async client=>{
-    const profile=await client.query('SELECT payload FROM moat_profiles WHERE subject_id=$1',[subjectId]);
+    const profile=await loadProfile(client,subjectId);
     const workspace=await loadWorkspace(client,subjectId);
-    return profile.rowCount&&workspace?{profile:profile.rows[0].payload,workspace}:null;
+    return profile&&workspace?{profile:profile.profile,profileRevision:profile.revision,workspace}:null;
    },{readOnly:true});
+  },
+  async readProfile(subjectId){
+   if(!validSubject(subjectId))return null;
+   return transaction(pool,client=>loadProfile(client,subjectId),{readOnly:true});
   },
   async readWorkspace(subjectId){
    if(!validSubject(subjectId))return null;
@@ -136,6 +150,34 @@ export function createPostgresProductRepository({pool,tokenFactory=()=>randomByt
    if(!validRevision(revision))return {ok:false,code:'invalid_workspace'};
    const snapshot=clone(mutation);
    return save(subjectId,revision,hash(canonical({operation:'object',revision,mutation:snapshot})),idempotencyKey,current=>applyWorkspaceMutation(current,snapshot));
+  },
+  async applyProfileChangeSet(subjectId,revision,changeSet,{idempotencyKey}={}){
+   if(!validSubject(subjectId))return {ok:false,code:'subject_not_found'};
+   if(!validIdempotencyKey(idempotencyKey))return {ok:false,code:'invalid_idempotency_key'};
+   if(!validRevision(revision))return {ok:false,code:'invalid_profile'};
+   const snapshot=clone(changeSet),fingerprint=hash(canonical({operation:'profile-change',revision,changeSet:snapshot}));
+   return transaction(pool,async client=>{
+    const workspaceLock=await client.query('SELECT revision FROM moat_workspaces WHERE subject_id=$1 FOR UPDATE',[subjectId]);
+    if(!workspaceLock.rowCount)return {ok:false,code:'subject_not_found'};
+    await client.query('DELETE FROM moat_idempotency_receipts WHERE subject_id=$1 AND expires_at<=clock_timestamp()',[subjectId]);
+    await client.query('DELETE FROM moat_profile_receipts WHERE subject_id=$1 AND expires_at<=clock_timestamp()',[subjectId]);
+    const receipt=await client.query('SELECT fingerprint,profile,revision,duplicate FROM moat_profile_receipts WHERE subject_id=$1 AND operation_key=$2',[subjectId,idempotencyKey]);
+    if(receipt.rowCount)return receipt.rows[0].fingerprint===fingerprint?{ok:true,profile:receipt.rows[0].profile,revision:Number(receipt.rows[0].revision),duplicate:receipt.rows[0].duplicate,replayed:true}:{ok:false,code:'idempotency_conflict'};
+    const otherReceipt=await client.query('SELECT 1 FROM moat_idempotency_receipts WHERE subject_id=$1 AND operation_key=$2',[subjectId,idempotencyKey]);
+    if(otherReceipt.rowCount)return {ok:false,code:'idempotency_conflict'};
+    const locked=await client.query('SELECT payload,revision FROM moat_profiles WHERE subject_id=$1 FOR UPDATE',[subjectId]);
+    if(!locked.rowCount)return {ok:false,code:'subject_not_found'};
+    const current={profile:locked.rows[0].payload,revision:Number(locked.rows[0].revision)};
+    if(current.revision!==revision)return {ok:false,code:'revision_conflict',...current};
+    const count=await client.query('SELECT (SELECT count(*) FROM moat_idempotency_receipts WHERE subject_id=$1)+(SELECT count(*) FROM moat_profile_receipts WHERE subject_id=$1) AS count',[subjectId]);
+    if(Number(count.rows[0].count)>=maxKeysPerSubject)return {ok:false,code:'idempotency_capacity'};
+    const applied=applyProfileChangeSet(current.profile,snapshot);
+    if(!applied.ok)return {ok:false,code:applied.code};
+    const nextRevision=applied.duplicate?revision:revision+1;
+    if(!applied.duplicate)await client.query('UPDATE moat_profiles SET payload=$2::jsonb,revision=$3,updated_at=now() WHERE subject_id=$1',[subjectId,JSON.stringify(applied.profile),nextRevision]);
+    await client.query("INSERT INTO moat_profile_receipts(subject_id,operation_key,fingerprint,profile,revision,duplicate,expires_at) VALUES($1,$2,$3,$4::jsonb,$5,$6,clock_timestamp()+($7*interval '1 second'))",[subjectId,idempotencyKey,fingerprint,JSON.stringify(applied.profile),nextRevision,applied.duplicate,idempotencyPolicy.retentionSeconds]);
+    return {ok:true,profile:clone(applied.profile),revision:nextRevision,duplicate:applied.duplicate,replayed:false};
+   });
   }
  };
 }

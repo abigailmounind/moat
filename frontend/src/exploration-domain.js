@@ -1,5 +1,7 @@
 import {confirmReview} from './exploration-review.js';
 import {createPrototypeProfile,validatePrototypeProfile} from '../../shared/profile.js';
+import {runRulesAnalysis} from '../../shared/rules-analysis.js';
+import {applyProfileChangeSet} from '../../shared/profile-changes.js';
 export {createPrototypeProfile,validatePrototypeProfile} from '../../shared/profile.js';
 const capitals=new Set(['human','social','psychological','financial','physical']);
 const rivers=new Set(['survival','ability','love']);
@@ -12,11 +14,6 @@ const safeId=value=>String(value??'session').toLowerCase().replace(/[^a-z0-9_-]+
 const clean=value=>String(value??'').trim();
 const canonical=value=>Array.isArray(value)?`[${value.map(canonical).join(',')}]`:value&&typeof value==='object'?`{${Object.keys(value).sort().map(key=>`${JSON.stringify(key)}:${canonical(value[key])}`).join(',')}}`:JSON.stringify(value);
 function fingerprint(value){let hash=2166136261;for(const char of canonical(value)){hash^=char.charCodeAt(0);hash=Math.imul(hash,16777619);}return (hash>>>0).toString(36);}
-const riverBasis={
- survival:{explanation:'你明确说明这段经历正在承担现实支撑，或正在验证交换价值。',uncertainty:'稳定性与可持续程度仍需继续观察。',rule:'R07'},
- ability:{explanation:'你明确说明这段经历里的做法已在另一种任务中复用。',uncertainty:'当前只记录这次复用，不扩展为普遍可迁移。',rule:'R08'},
- love:{explanation:'你明确说明没有现实压力时，仍愿意继续投入这项具体活动。',uncertainty:'投入意愿可以继续通过实际行动核对。',rule:'R09'}
-};
 
 export function createExplorationSession({id=generatedSessionId(),flowVersion='stage10-minimum-v0.2'}={}){
  return {id,flowVersion,status:'draft',answers:[],excludedProposalIds:[],createdAt:'prototype-time'};
@@ -35,21 +32,7 @@ export function answersFromUi(uiState){
  ];
 }
 
-export function runSyntheticAnalysis(session){
- const byId=Object.fromEntries(session.answers.map(answer=>[answer.questionId,answer]));
- const actions=byId.q4?.value??[],outcomes=byId.q5?.value?.outcomes??[],method=clean(byId.q6?.value),riverSelections=(byId.q7?.value??[]).filter(river=>rivers.has(river));
- if(!byId.q3?.value||!actions.length||!outcomes.length)throw new Error('analysis_input_incomplete');
- const prefix=safeId(session.id),evidenceId=prefix+'_evidence_experience',capitalId=prefix+'_capital_human';
- return {
-  contract_version:'0.1',session_id:session.id,
-  claims:[{id:prefix+'_claim_experience',kind:'experience',text:'用户描述了一段包含具体行动的实践。',source_type:'ai_proposal',confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:'R01',rule_version:'0.1',basis_refs:['q3','q4','q5']}],
-  evidence_drafts:[{id:evidenceId,title:'一段具体实践',experience:byId.q3.value,actions,result:outcomes.join('、'),source:byId.q5.value.source,limitations:[method?'这次使用的方法已记录；熟练程度仍需更多实践说明。':'尚未补充具体方法；本轮只记录行动与结果。'],source_type:'user_self_report',confirmation_status:'pending',input_refs:['q3','q4','q5'],rule_id:'R01',rule_version:'0.1',basis_refs:['q3','q4','q5']}],
-  capital_links:method?[{id:capitalId,evidence_id:evidenceId,capital:'human',aspect:'具体方法的一次实践',explanation:`你明确补充了这次使用的方法：${method}。`,confirmation_status:'pending',input_refs:['q4','q6'],rule_id:'R03',rule_version:'0.1',basis_refs:['q4','q6']}]:[],
-  river_links:riverSelections.map(river=>({id:prefix+'_river_'+river,evidence_id:evidenceId,river,explanation:riverBasis[river].explanation,uncertainty:riverBasis[river].uncertainty,confirmation_status:'pending',input_refs:['q3','q7'],rule_id:riverBasis[river].rule,rule_version:'0.1',basis_refs:['q3','q7']})),
-  future_direction_drafts:[],
-  unknowns:[...(!method?[{id:prefix+'_unknown_capital',topic:'capital',reason:byId.q6?'skipped':'not_asked',input_refs:byId.q6?['q6']:[]}]:[]),...(!riverSelections.length?[{id:prefix+'_unknown_river',topic:'river',reason:byId.q7?'skipped':'not_asked',input_refs:byId.q7?['q7']:[]}]:[]),{id:prefix+'_unknown_direction',topic:'direction',reason:'not_asked',input_refs:[]}]
- };
-}
+export const runSyntheticAnalysis=runRulesAnalysis;
 
 // Explicit no-AI fallback: preserve only what the user entered and keep all
 // interpretation open for manual review. This is intentionally not a
@@ -104,16 +87,7 @@ export function createMapChangeSet(confirmed){
  return {id:`change_${fingerprint(body)}`,...body};
 }
 
-export function applyMapChangeSet(profile,changeSet,{fail=false}={}){
- if(fail)return {ok:false,error:'prototype_commit_failed',profile};
- const next=structuredClone(profile);next.directions??={};
- for(const [target,ids] of Object.entries(changeSet.scope??{}))for(const id of ids)delete next[target][id];
- for(const operation of changeSet.operations){const target={add_evidence:'evidence',link_capital:'capitalLinks',link_river:'riverLinks',keep_unknown:'unknowns',save_direction:'directions'}[operation.type];if(!target)throw new Error('invalid_operation');next[target][operation.entityId]=operation.payload;}
- if(!validatePrototypeProfile(next))return {ok:false,error:'invalid_map_change',profile};
- if(['evidence','capitalLinks','riverLinks','unknowns','directions'].every(key=>canonical(next[key]??{})===canonical(profile[key]??{})))return {ok:true,duplicate:true,profile};
- if(!next.appliedChangeSets.includes(changeSet.id))next.appliedChangeSets.push(changeSet.id);
- return {ok:true,duplicate:false,profile:next};
-}
+export const applyMapChangeSet=applyProfileChangeSet;
 
 export function buildPrototypeArtifacts(uiState,providedProposal=null){
  const session=createExplorationSession();session.answers=answersFromUi(uiState);

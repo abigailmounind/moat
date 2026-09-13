@@ -69,3 +69,28 @@ test('从主导航进入路径与计划时先显示无选中态概览',async()=>
   }finally{for(const [key,value] of Object.entries(previous))if(value)Object.defineProperty(globalThis,key,value);else delete globalThis[key];}
  }
 });
+
+test('计划新建入口在空工作区可见，已有路径时要求明确选择归属',async()=>{
+ for(const withPath of [false,true]){
+  const listeners={},app={innerHTML:'',addEventListener:(type,handler)=>{listeners[type]=handler;}},previous=Object.fromEntries(['document','window','location','localStorage'].map(k=>[k,Object.getOwnPropertyDescriptor(globalThis,k)]));
+  try{
+   const path={...newPath(),name:'可选路径',river:'love'},stored={...emptyWorkspace(),paths:withPath?[path]:[]};
+   Object.defineProperty(globalThis,'document',{configurable:true,value:{querySelector:selector=>selector==='#app'?app:{focus(){}}}});
+   Object.defineProperty(globalThis,'window',{configurable:true,value:{addEventListener(){},confirm:()=>true}});
+   Object.defineProperty(globalThis,'location',{configurable:true,value:{search:'?view=plans'}});
+   Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{getItem:key=>key===WORKSPACE_KEY?JSON.stringify(stored):null}});
+   await import(`../frontend/src/workspaces.js?plan-entry=${withPath}`);
+   assert.ok(app.innerHTML.includes('data-create-plan'));
+   await listeners.click({target:{closest:()=>({tagName:'BUTTON',dataset:{},hasAttribute:name=>name==='data-create-plan'})}});
+   if(withPath){
+    assert.ok(app.innerHTML.includes('name="pathId"><option value="">请选择所属路径</option>'));
+    assert.ok(app.innerHTML.includes(`value="${path.id}" >可选路径`));
+    assert.ok(app.innerHTML.includes('value="love" selected'));
+   }else{
+    assert.ok(app.innerHTML.includes('先为计划建立一条路径'));
+    assert.ok(app.innerHTML.includes('/?view=paths&river=love&new=1'));
+    assert.ok(!app.innerHTML.includes('id="workspace-form"'));
+   }
+  }finally{for(const [key,value] of Object.entries(previous))if(value)Object.defineProperty(globalThis,key,value);else delete globalThis[key];}
+ }
+});

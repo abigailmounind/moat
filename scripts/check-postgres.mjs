@@ -41,11 +41,11 @@ try{
  await admin.query('CREATE SCHEMA '+schema);schemaCreated=true;
  await Promise.all([migratePostgres(pool),migratePostgres(pool2)]);
  await verifyPostgresSchema(pool);
- assert.equal((await pool.query('SELECT count(*)::integer AS count FROM moat_schema_migrations')).rows[0].count,1);
+ assert.equal((await pool.query('SELECT count(*)::integer AS count FROM moat_schema_migrations')).rows[0].count,2);
  console.log('PostgreSQL: concurrent migrations and schema verification passed.');
  const repository=createPostgresProductRepository({pool}),otherRepository=createPostgresProductRepository({pool:pool2});
  const deletedSubject=await checkDataLifecycle(repository);
- for(const table of ['moat_sessions','moat_profiles','moat_workspaces','moat_paths','moat_plans','moat_plan_paths','moat_growth_records','moat_idempotency_receipts']){
+ for(const table of ['moat_sessions','moat_profiles','moat_workspaces','moat_paths','moat_plans','moat_plan_paths','moat_growth_records','moat_idempotency_receipts','moat_profile_receipts']){
   assert.equal((await pool.query('SELECT count(*)::integer AS count FROM '+table+' WHERE subject_id=$1',[deletedSubject])).rows[0].count,0);
  }
  console.log('PostgreSQL: data export snapshot and subject deletion cascade passed.');

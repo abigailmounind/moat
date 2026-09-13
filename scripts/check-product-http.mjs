@@ -30,13 +30,18 @@ try{
   const source=await response.text();
   for(const [,dependency] of source.matchAll(/['"]((?:\.{1,2}\/)[^'"]+\.js)['"]/g))queue.push(new URL(dependency,origin+route).pathname);
  }
- assert.ok(seen.has('/shared/understanding.js'));assert.ok(seen.has('/shared/profile.js'));assert.ok(seen.has('/shared/workspace.js'));assert.ok(seen.has('/shared/workspace-operations.js'));
+ assert.ok(seen.has('/shared/understanding.js'));assert.ok(seen.has('/shared/rules-analysis.js'));assert.ok(seen.has('/shared/profile.js'));assert.ok(seen.has('/shared/profile-changes.js'));assert.ok(seen.has('/shared/workspace.js'));assert.ok(seen.has('/shared/workspace-operations.js'));
  assert.deepEqual(capabilities.objectWrites.resources,['paths','plans','growth-records']);
  for(const route of ['/backend/product-repository.mjs','/shared/private.js','/AGENTS.md'])assert.equal((await get(route)).status,404);
  assert.equal((await get('/shared/workspace.js',{method:'POST'})).status,405);
 
  const session=await get('/api/v1/session',{method:'POST',headers:{origin}});assert.equal(session.status,201);
  const cookie=session.headers.get('set-cookie').split(';')[0];
+ const analysis=await get('/api/v1/analyses/rules',{method:'POST',headers:{origin,cookie,'content-type':'application/json'},body:JSON.stringify({session:{id:'http-rules',flowVersion:'stage10-minimum-v0.2',answers:[{questionId:'q3',kind:'experience',value:'project',skipped:false},{questionId:'q4',kind:'actions',value:['organize'],skipped:false},{questionId:'q5',kind:'outcome',value:{outcomes:['artifact'],source:null},skipped:false}]}})});
+ assert.equal(analysis.status,200);assert.equal((await analysis.json()).analysis.mode,'rules');
+ const profileChange={id:'change_http_profile',sessionId:'http-rules',scope:{unknowns:['http_unknown_direction']},operations:[{type:'keep_unknown',entityId:'http_unknown_direction',payload:{id:'http_unknown_direction',topic:'direction',reason:'not_asked',input_refs:[],explanation:'继续保持未知。',confirmation_status:'confirmed'}}]};
+ const profile=await get('/api/v1/profile/change-sets',{method:'POST',headers:{origin,cookie,'content-type':'application/json','idempotency-key':'http-profile-1'},body:JSON.stringify({revision:0,changeSet:profileChange})});
+ assert.equal(profile.status,200);assert.equal((await profile.json()).revision,1);
  const headers={origin,cookie,'content-type':'application/json','idempotency-key':'http-smoke-1'};
  const body=JSON.stringify({revision:0,workspace:emptyWorkspace()});
  const saves=await Promise.all(Array.from({length:4},()=>get('/api/v1/workspace',{method:'PUT',headers,body})));
@@ -44,7 +49,7 @@ try{
  assert.equal(saves.filter(response=>response.headers.get('idempotency-replayed')==='false').length,1);
  const conflict=await get('/api/v1/workspace',{method:'PUT',headers,body:JSON.stringify({revision:1,workspace:{...emptyWorkspace(),revision:1}})});
  assert.equal(conflict.status,409);assert.equal((await conflict.json()).error.code,'idempotency_conflict');
- const bootstrap=await get('/api/v1/bootstrap',{headers:{cookie}});assert.equal((await bootstrap.json()).data.workspace.revision,1);
+ const bootstrap=await get('/api/v1/bootstrap',{headers:{cookie}});const bootstrapBody=await bootstrap.json();assert.equal(bootstrapBody.data.workspace.revision,1);assert.equal(bootstrapBody.data.profileRevision,1);
  assert.equal((await get('/api/v1/workspace')).status,401);
  const other=await get('/api/v1/session',{method:'POST',headers:{origin}});
  const otherCookie=other.headers.get('set-cookie').split(';')[0];

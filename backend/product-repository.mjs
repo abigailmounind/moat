@@ -1,5 +1,6 @@
 import {createHash,randomBytes,randomUUID} from 'node:crypto';
 import {createPrototypeProfile} from '../shared/profile.js';
+import {applyProfileChangeSet} from '../shared/profile-changes.js';
 import {emptyWorkspace,validWorkspace} from '../shared/workspace.js';
 import {applyWorkspaceMutation} from '../shared/workspace-operations.js';
 
@@ -20,7 +21,7 @@ export function createMemoryProductRepository({tokenFactory=()=>randomBytes(32).
   createAnonymousSession(){
    const token=tokenFactory(),subject={id:idFactory(),kind:'anonymous',createdAt:new Date(now()).toISOString()};
    sessions.set(hash(token),subject.id);
-   subjects.set(subject.id,{subject,profile:createPrototypeProfile(),workspace:emptyWorkspace(),receipts:new Map()});
+   subjects.set(subject.id,{subject,profile:createPrototypeProfile(),profileRevision:0,workspace:emptyWorkspace(),receipts:new Map()});
    return {token,subject:clone(subject)};
   },
   findSession(token){
@@ -34,7 +35,11 @@ export function createMemoryProductRepository({tokenFactory=()=>randomBytes(32).
   },
   readBootstrap(subjectId){
    const record=subjects.get(subjectId);
-   return record?clone({profile:record.profile,workspace:record.workspace}):null;
+   return record?clone({profile:record.profile,profileRevision:record.profileRevision,workspace:record.workspace}):null;
+  },
+  readProfile(subjectId){
+   const record=subjects.get(subjectId);
+   return record?clone({profile:record.profile,revision:record.profileRevision}):null;
   },
   readWorkspace(subjectId){
    const record=subjects.get(subjectId);
@@ -89,6 +94,25 @@ export function createMemoryProductRepository({tokenFactory=()=>randomBytes(32).
    const savedReceipt={fingerprint,workspace:clone(next),expiresAt:timestamp+idempotencyPolicy.retentionSeconds*1000};
    record.workspace=next;record.receipts.set(idempotencyKey,savedReceipt);
    return {ok:true,workspace:clone(next),replayed:false};
+  },
+  applyProfileChangeSet(subjectId,revision,changeSet,{idempotencyKey}={}){
+   const record=subjects.get(subjectId);
+   if(!record)return {ok:false,code:'subject_not_found'};
+   if(!validIdempotencyKey(idempotencyKey))return {ok:false,code:'invalid_idempotency_key'};
+   if(!Number.isSafeInteger(revision)||revision<0||revision===Number.MAX_SAFE_INTEGER)return {ok:false,code:'invalid_profile'};
+   const snapshot=clone(changeSet),timestamp=now(),fingerprint=hash(canonical({operation:'profile-change',revision,changeSet:snapshot}));
+   for(const [key,receipt] of record.receipts)if(receipt.expiresAt<=timestamp)record.receipts.delete(key);
+   const receipt=record.receipts.get(idempotencyKey);
+   if(receipt)return receipt.fingerprint===fingerprint&&receipt.profile?{ok:true,profile:clone(receipt.profile),revision:receipt.profileRevision,duplicate:receipt.duplicate,replayed:true}:{ok:false,code:'idempotency_conflict'};
+   if(record.profileRevision!==revision)return {ok:false,code:'revision_conflict',profile:clone(record.profile),revision:record.profileRevision};
+   if(record.receipts.size>=maxKeysPerSubject)return {ok:false,code:'idempotency_capacity'};
+   const applied=applyProfileChangeSet(record.profile,snapshot);
+   if(!applied.ok)return {ok:false,code:applied.code};
+   const nextRevision=applied.duplicate?revision:revision+1;
+   const savedReceipt={fingerprint,profile:clone(applied.profile),profileRevision:nextRevision,duplicate:applied.duplicate,expiresAt:timestamp+idempotencyPolicy.retentionSeconds*1000};
+   if(!applied.duplicate){record.profile=applied.profile;record.profileRevision=nextRevision;}
+   record.receipts.set(idempotencyKey,savedReceipt);
+   return {ok:true,profile:clone(applied.profile),revision:nextRevision,duplicate:applied.duplicate,replayed:false};
   }
  };
 }
